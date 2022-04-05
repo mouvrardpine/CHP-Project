@@ -48,9 +48,10 @@ vector <double> mult(double a , vector<double> x)
     {
        res[i]=a*x[i];
     }
+    return res ;
 }
 
-double GC(vector <double> x0 , vector <double> b , double eps , double kmax,double Nx, double Ny,double dt)
+vector<double> GC(vector <double> x0 , vector <double> b , double eps , double kmax,double Nx, double Ny,double dt)
 {
     
     vector<double> r(x0.size(),0),x(x0.size(),0), d(x0.size(),0), z(x0.size(),0), rp(x0.size(),0);
@@ -69,7 +70,7 @@ double GC(vector <double> x0 , vector <double> b , double eps , double kmax,doub
         gamma=ps(r,r);
         alpha=gamma/ps(z,d); 
         x=add(x,mult(alpha,d));
-        rp=substract(r,mult(alpha,fz));
+        rp=substract(r,mult(alpha,z));
         d= add(rp,mult(ps(rp,rp),d));
         r=rp; 
         beta = norm(r);

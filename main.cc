@@ -9,17 +9,21 @@
 
 int main()
 {
-    int Nx(3), Ny(4) ; 
-    double dt(0.1),dx,dy,D, Lx(1), Ly(1) ; 
-    std::vector<double> v(Nx*Ny,1), u(Nx*Ny);
-    u=matvec(dt, Nx, Ny, v);
-    for (int k(0); k<Nx*Ny; k++)
+    int Nx(3), Ny(4),k(0),kmax(1000); 
+    double dt(0.1),dx,dy,D, Lx(1), Ly(1), tmax(1),eps(0.0001); 
+    std::vector<double> u(Nx*Ny,0),b(Nx*Ny,0),x0(Nx*Ny,0);
+    while (dt*k<tmax)
     {
-    std::cout<< u[k]<<std :: endl;
+        b=RHS(dt,Nx,Ny,u,dt*k); 
+        u=GC(x0,b,eps,kmax,Nx,Ny,dt); 
+        k++;
+        
     }
 
-
-
+    for (int k(0); k<Nx*Ny; k++)
+    {
+        std::cout<< u[k]<<std :: endl;
+    }
     return 0;
 
 }
