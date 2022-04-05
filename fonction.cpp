@@ -3,18 +3,18 @@
 
 double f1(double x, double y, double t)
 {
-    f1=2*(y-y**2+x-x**2); 
+    return 2*(y-y*y+x-x*x); 
 
 }
 
 
-double g1(double x, double y, double t); 
+double g1(double x, double y, double t)
 {
-    g1=0;
+    return 0;
 }
 
-double h1(double x, double y, double t); 
+double h1(double x, double y, double t)
 {
 
-    h1=0;
+    return 0;
 }

@@ -5,7 +5,7 @@
 
 int main()
 {
-    int Nx, Ny, Lx, Ly ; 
-    double dt,dx,dy ; 
+    int Nx(3), Ny(4) ; 
+    double dt(0.1),dx,dy,D, Lx(1), Ly(1) ; 
 
 }
