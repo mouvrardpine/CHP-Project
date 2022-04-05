@@ -69,7 +69,7 @@ double GC(vector <double> x0 , vector <double> b , double eps , double kmax,doub
         gamma=ps(r,r);
         alpha=gamma/ps(z,d); 
         x=add(x,mult(alpha,d));
-        rp=substract(r,mult(alpha,z));
+        rp=substract(r,mult(alpha,fz));
         d= add(rp,mult(ps(rp,rp),d));
         r=rp; 
         beta = norm(r);
