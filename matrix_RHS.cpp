@@ -23,23 +23,20 @@ std::vector<double> matvec( double dt,  int Nx,  int Ny,  std::vector<double> x)
 		{
 			Ax[i] += beta_y*x[i+Nx];
 		}
-		if (i > Nx)
+		if (i > Nx-1)
 		{
 			Ax[i] += beta_y*x[i-Nx];
 		}
 
 		if ((i+1)%Nx != 0)
 		{
-			if (i < Nx*Ny)
-			{
-				Ax[i] += beta_x*x[i+1];
-			}
-			if (i > 0)
+			Ax[i] += beta_x*x[i+1];
+		}
+		if (i%Nx !=0 && i != 0)
 			{
 				Ax[i] += beta_x*x[i-1];
 			}
 			
-		}
 	}
 
 	return Ax;
