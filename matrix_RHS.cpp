@@ -19,20 +19,24 @@ std::vector<double> matvec( double dt,  int Nx,  int Ny,  std::vector<double> x)
 	{
 		Ax[i] = x[i]*alpha;
 
-		if (i < Nx*Ny - 3)
+		if (i < Nx*Ny - Nx)
 		{
-			Ax[i] += beta_y*x[i*(Nx*Ny + 1) + Nx];
+			Ax[i] += beta_y*x[i+Nx];
 		}
-		if (i > 2)
+		if (i > Nx-1)
 		{
-			Ax[i] += beta_y*x[(i+Nx)*(Nx*Ny) + i];
+			Ax[i] += beta_y*x[i-Nx];
 		}
 
 		if ((i+1)%Nx != 0)
 		{
-			Ax[i] += beta_x*x[i*(Nx*Ny + 1) + (Nx-2)];
-			Ax[i] += beta_x*x[(i+Nx-2)*Nx*Ny + i];
+			Ax[i] += beta_x*x[i+1];
 		}
+		if (i%Nx !=0 && i != 0)
+			{
+				Ax[i] += beta_x*x[i-1];
+			}
+			
 	}
 
 	return Ax;
