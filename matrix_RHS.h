@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-std::vector<double> matvec(const double dt, const int Nx, const int Ny, const std::vector<double> x) const
+std::vector<double> matvec(double dt,int Nx,int Ny,std::vector<double> x);
 
 #define _MATRIX_RHS_H
 #endif
