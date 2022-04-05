@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <cmath>
 
 std::vector<double> matvec(double dt,int Nx,int Ny,std::vector<double> x);
 

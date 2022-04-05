@@ -4,6 +4,8 @@
 #include <math.h>
 #include "fonction.h"
 #include "matrix_RHS.h"
+#include "solv_lin.h"
+
 
 int main()
 {
