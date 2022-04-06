@@ -48,14 +48,15 @@ std::vector<double> RHS( double dt, int Nx, int Ny, std::vector<double> u, doubl
 	double dx = 1./(Nx+1) , dy = 1./(Ny+1);
 	double alpha = 2*dt/(pow(dx,2) + pow(dy,2)) - 1 ;
 	double beta_x = - dt/pow(dx,2) , beta_y = - dt/pow(dy,2) ; 
-	std::vector<double> F;
-
-	for (int i = 0; i < Nx*Ny; i++)
-	{
-		F[i] = 0;
-	}
+	std::vector<double> F(Nx*Ny,0.);
 	
 
+	//for (int i = 0; i < Nx*Ny; i++)
+	//{
+
+		//F[i] = 0;
+	//}
+	
 	for (int i = 0; i < Nx*Ny; ++i)
 	{
 		double x = (i%Nx)*dx, y = (i/Nx)*dy;
