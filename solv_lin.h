@@ -1,3 +1,5 @@
+#ifndef _SOLV_LIN_H
+
 #include "matrix_RHS.h"
 
 using namespace std;
@@ -9,3 +11,5 @@ vector <double> mult(double a , vector<double> x);
 vector<double> GC(vector <double> x0 , vector <double> b , double eps , int kmax,int Nx, int Ny,double dt);
 
 
+#define _SOLV_LIN_H
+#endif

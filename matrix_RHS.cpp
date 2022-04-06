@@ -12,8 +12,8 @@ std::vector<double> matvec( double dt,  int Nx,  int Ny,  std::vector<double> x)
 
 	double dx = 1./(Nx+1) , dy = 1./(Ny+1);
 	double alpha = 2*dt/(pow(dx,2) + pow(dy,2)) - 1 ;
-	double beta_x = - dt/pow(dx,2) , beta_y = - dt/pow(dy,2) ; 
-	cout << "alpha= "<< alpha << "	beta_x="<<beta_x<< "	beta_y="<<beta_y<<endl;
+	double beta_x = - dt/pow(dx,2) , beta_y = - dt/pow(dy,2) ;
+	//cout << "alpha= "<< alpha << "	beta_x="<<beta_x<< "	beta_y="<<beta_y<<endl;
 	std::vector<double> Ax(Nx*Ny,0);
 
 	for (int i = 0; i < Nx*Ny; ++i)
@@ -37,7 +37,7 @@ std::vector<double> matvec( double dt,  int Nx,  int Ny,  std::vector<double> x)
 			{
 				Ax[i] += beta_x*x[i-1];
 			}
-			
+
 	}
 
 	return Ax;
@@ -47,22 +47,22 @@ std::vector<double> RHS( double dt, int Nx, int Ny, std::vector<double> u, doubl
 {
 	double dx = 1./(Nx+1) , dy = 1./(Ny+1);
 	double alpha = 2*dt/(pow(dx,2) + pow(dy,2)) - 1 ;
-	double beta_x = - dt/pow(dx,2) , beta_y = - dt/pow(dy,2) ; 
+	double beta_x = - dt/pow(dx,2) , beta_y = - dt/pow(dy,2) ;
 	std::vector<double> F(Nx*Ny,0.);
-	
+
 
 	//for (int i = 0; i < Nx*Ny; i++)
 	//{
 
 		//F[i] = 0;
 	//}
-	
+
 	for (int i = 0; i < Nx*Ny; ++i)
 	{
 		double x = (i%Nx)*dx, y = (i/Nx)*dy;
 		F[i] = -dt*f1(x, y, t + dt, 1, 1. ,1.) + u[i];
 
-		if (x == 0. || x == 1.) 
+		if (x == 0. || x == 1.)
 		{
 			F[i] += beta_x*h1(x,y,t+dt, 1);
 		}

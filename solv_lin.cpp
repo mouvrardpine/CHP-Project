@@ -1,4 +1,8 @@
+#ifndef _SOLV_LIN_CPP
+
 #include "solv_lin.h"
+#include "math.h"
+#include <iostream>
 
 using namespace std;
 double ps(vector <double> x1, vector <double> x2)
@@ -9,7 +13,7 @@ double ps(vector <double> x1, vector <double> x2)
     {
         res += x1[i]*x2[i];
     }
-    return res; 
+    return res;
 
 }
 
@@ -17,12 +21,12 @@ vector <double> substract(vector <double> x1, vector <double> x2)
 {
     int n(x1.size());
     vector<double> res(n,0) ;
-    
+
     for (int i(0); i< n; i++)
     {
         res[i] =x1[i]-x2[i];
     }
-    return res; 
+    return res;
 
 }
 
@@ -36,7 +40,7 @@ vector<double> res(n,0) ;
     {
         res[i] =x1[i]+x2[i];
     }
-    return res; 
+    return res;
 
 }
 
@@ -50,7 +54,7 @@ vector <double> mult(double a , vector<double> x)
 {
     int n(x.size());
     vector<double> res(n,0);
-     
+
     for (int i(0); i< n;i++)
     {
        res[i]=a*x[i];
@@ -58,38 +62,39 @@ vector <double> mult(double a , vector<double> x)
     return res ;
 }
 
-vector<double> GC(vector <double> x0 , vector <double> b , double eps , int kmax,int Nx, int Ny,double dt)
+std::vector<double> GC(std::vector <double> x0 , std::vector <double> b , double eps , int kmax,int Nx, int Ny,double dt)
 {
     int k(0), n(x0.size());
     vector<double> r(n,0),x(n,0), d(n,0), z(n,0), rp(n,0);
-    double beta, gamma,alpha ; 
-    
+    double beta, gamma,alpha ;
 
+    x=x0;
+     r=substract(b,matvec(dt,Nx, Ny,x));
+     d=r;
+     beta= norm(r);
+     while ((beta>eps)&&(k<kmax))
+     {
+         z=matvec(dt,Nx,Ny,d);
+         gamma=ps(r,r);
+         alpha=gamma/ps(z,d);
+         x=add(x,mult(alpha,d));
+         rp=substract(r,mult(alpha,z));
+         d= add(rp,mult((ps(rp,rp)/pow(beta,2)),d));
+         r=rp;
+         beta = norm(r);
+         //cout << beta << endl;
+         k=k+1;
+     }
 
-    x=x0; 
-    r=substract(b,matvec(dt,Nx, Ny,x));
-    d=r; 
-    beta= norm(r);
-    while ((beta>eps)&&(k<kmax))
-    {
-        z=matvec(dt,Nx,Ny,d);
-        gamma=ps(r,r);
-        alpha=gamma/ps(z,d); 
-        x=add(x,mult(alpha,d));
-        rp=substract(r,mult(alpha,z));
-        d= add(rp,mult(ps(rp,rp),d));
-        r=rp; 
-        beta = norm(r);
-        k=k+1; 
+     if (k>kmax)
+     {
+         printf("tolérance non atteinte");
     }
-     
-    if (k>kmax)
-    {
-        printf("tolérance non atteinte");
-    }
-    return x; 
+    return x;
 
 }
 
 
 
+#define _SOLV_LIN_CPP
+#endif
