@@ -4,7 +4,8 @@ using namespace std;
 double ps(vector <double> x1, vector <double> x2)
 {
     double res(0) ;
-    for (int i(0); i< x1.size(); i++)
+    int n(x1.size());
+    for (int i(0); i< n; i++)
     {
         res += x1[i]*x2[i];
     }
@@ -14,8 +15,10 @@ double ps(vector <double> x1, vector <double> x2)
 
 vector <double> substract(vector <double> x1, vector <double> x2)
 {
-    vector<double> res(x1.size(),0) ;
-    for (int i(0); i< x1.size(); i++)
+    int n(x1.size());
+    vector<double> res(n,0) ;
+    
+    for (int i(0); i< n; i++)
     {
         res[i] =x1[i]-x2[i];
     }
@@ -26,9 +29,10 @@ vector <double> substract(vector <double> x1, vector <double> x2)
 
 vector<double> add(vector <double> x1, vector <double> x2)
 {
+int n(x1.size());
+vector<double> res(n,0) ;
 
-vector<double> res(x1.size(),0) ;
-    for (int i(0); i< x1.size(); i++)
+    for (int i(0); i< n; i++)
     {
         res[i] =x1[i]+x2[i];
     }
@@ -44,8 +48,10 @@ double norm(vector<double> x)
 
 vector <double> mult(double a , vector<double> x)
 {
-    vector<double> res(x.size(),0);
-    for (int i(0); i< x.size();i++)
+    int n(x.size());
+    vector<double> res(n,0);
+     
+    for (int i(0); i< n;i++)
     {
        res[i]=a*x[i];
     }
@@ -54,16 +60,14 @@ vector <double> mult(double a , vector<double> x)
 
 vector<double> GC(vector <double> x0 , vector <double> b , double eps , int kmax,int Nx, int Ny,double dt)
 {
-    
-   /* vector<double> r(x0.size(),0),x(x0.size(),0), d(x0.size(),0), z(x0.size(),0), rp(x0.size(),0);
+    int k(0), n(x0.size());
+    vector<double> r(n,0),x(n,0), d(n,0), z(n,0), rp(n,0);
     double beta, gamma,alpha ; 
-    int k ;
+    
 
 
     x=x0; 
-    /* r=b-matvec(dt,Nx, Ny,x);  */
-    
-    /*r=substract(b,matvec(dt,Nx, Ny,x));
+    r=substract(b,matvec(dt,Nx, Ny,x));
     d=r; 
     beta= norm(r);
     while ((beta>eps)&&(k<kmax))
@@ -82,7 +86,7 @@ vector<double> GC(vector <double> x0 , vector <double> b , double eps , int kmax
     if (k>kmax)
     {
         printf("tolérance non atteinte");
-    }*/
+    }
     return x; 
 
 }
