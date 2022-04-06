@@ -1,5 +1,6 @@
 #include "solv_lin.h"
 
+using namespace std;
 double ps(vector <double> x1, vector <double> x2)
 {
     double res(0) ;
@@ -51,20 +52,21 @@ vector <double> mult(double a , vector<double> x)
     return res ;
 }
 
-vector<double> GC(vector <double> x0 , vector <double> b , double eps , double kmax,double Nx, double Ny,double dt)
+vector<double> GC(vector <double> x0 , vector <double> b , double eps , int kmax,int Nx, int Ny,double dt)
 {
     
-    vector<double> r(x0.size(),0),x(x0.size(),0), d(x0.size(),0), z(x0.size(),0), rp(x0.size(),0);
+   /* vector<double> r(x0.size(),0),x(x0.size(),0), d(x0.size(),0), z(x0.size(),0), rp(x0.size(),0);
     double beta, gamma,alpha ; 
     int k ;
 
 
     x=x0; 
     /* r=b-matvec(dt,Nx, Ny,x);  */
-    r=substract(b,matvec(dt,Nx, Ny,x));
+    
+    /*r=substract(b,matvec(dt,Nx, Ny,x));
     d=r; 
     beta= norm(r);
-    while ((norm(r)>eps)&&(k<kmax))
+    while ((beta>eps)&&(k<kmax))
     {
         z=matvec(dt,Nx,Ny,d);
         gamma=ps(r,r);
@@ -80,7 +82,8 @@ vector<double> GC(vector <double> x0 , vector <double> b , double eps , double k
     if (k>kmax)
     {
         printf("tolérance non atteinte");
-    }
+    }*/
+    return x; 
 
 }
 
