@@ -62,6 +62,17 @@ vector <double> mult(double a , vector<double> x)
     return res ;
 }
 
+double normL2_2D(vector<double> x, double dx, double dy)
+{
+  double res(0);
+    for (int i = 0; i < x.size(); i++) {
+      res += pow(x[i],2);
+    };
+
+    res = sqrt(res*dx*dy);
+    return res;
+}
+
 std::vector<double> GC(std::vector <double> x0 , std::vector <double> b , double eps , int kmax,int Nx, int Ny,double dt)
 {
     int k(0), n(x0.size());
@@ -84,7 +95,7 @@ std::vector<double> GC(std::vector <double> x0 , std::vector <double> b , double
         beta = norm(r);
         //cout << beta << endl;
         k=k+1;
-        cout<<"k= "<<k<< "  beta= " << beta<< "  beta reel =" << norm(substract(b,matvec(dt,Nx, Ny,x))) << endl;
+        //cout<<"k= "<<k<< "  beta= " << beta<< "  beta reel =" << norm(substract(b,matvec(dt,Nx, Ny,x))) << endl;
     }
 
     if (k>kmax)
