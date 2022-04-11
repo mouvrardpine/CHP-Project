@@ -69,26 +69,27 @@ std::vector<double> GC(std::vector <double> x0 , std::vector <double> b , double
     double beta, gamma,alpha ;
 
     x=x0;
-     r=substract(b,matvec(dt,Nx, Ny,x));
-     d=r;
-     beta= norm(r);
-     while ((beta>eps)&&(k<kmax))
-     {
-         z=matvec(dt,Nx,Ny,d);
-         gamma=ps(r,r);
-         alpha=gamma/ps(z,d);
-         x=add(x,mult(alpha,d));
-         rp=substract(r,mult(alpha,z));
-         d= add(rp,mult((ps(rp,rp)/pow(beta,2)),d));
-         r=rp;
-         beta = norm(r);
-         //cout << beta << endl;
-         k=k+1;
-     }
+    r=substract(b,matvec(dt,Nx, Ny,x));
+    d=r;
+    beta= norm(r);
+    while ((beta>eps)&&(k<kmax))
+    {
+        z=matvec(dt,Nx,Ny,d);
+        gamma=ps(r,r);
+        alpha=gamma/ps(z,d);
+        x=add(x,mult(alpha,d));
+        rp=substract(r,mult(alpha,z));
+        d= add(rp,mult((ps(rp,rp)/pow(beta,2)),d));
+        r=rp;
+        beta = norm(r);
+        //cout << beta << endl;
+        k=k+1;
+        cout<<"k= "<<k<< "  beta= " << beta<< "  beta reel =" << norm(substract(b,matvec(dt,Nx, Ny,x))) << endl;
+    }
 
-     if (k>kmax)
-     {
-         printf("tolérance non atteinte");
+    if (k>kmax)
+    {
+        printf("tolérance non atteinte");
     }
     return x;
 
