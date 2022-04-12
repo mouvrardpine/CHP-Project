@@ -75,24 +75,24 @@ double normL2_2D(vector<double> x, double dx, double dy)
 
 std::vector<double> GC(std::vector <double> x0 , std::vector <double> b , double eps , int kmax,int Nx, int Ny,double dt)
 {
-    int k(0), n(x0.size());
+    int k(0), n(x0.size()), test1(2),test2(3); //test1  et test2 a supprimer : seulement pour esquiver bug de compilation
     vector<double> r(n,0),x(n,0), d(n,0), z(n,0), rp(n,0);
     double beta, gamma,alpha ;
 
     x=x0;
-    r=substract(b,matvec(dt,Nx, Ny,x));
+    r=substract(b,matvec(dt,Nx, Ny,x,test1,test2));
     d=r;
-    beta= norm(r);
+    beta= norm(r); //reduction pour la norme de r
     while ((beta>eps)&&(k<kmax))
     {
-        z=matvec(dt,Nx,Ny,d);
-        gamma=ps(r,r);
-        alpha=gamma/ps(z,d);
-        x=add(x,mult(alpha,d));
+        z=matvec(dt,Nx,Ny,d,test1,test2);
+        gamma=beta*beta; 
+        alpha=gamma/ps(z,d); //reduction pour le produit scalaire  !!!!!!!!!!!!!!!!!!!!!! vérification en print sur le gamma!!!!!!!!!!!!!!!!
+        x=add(x,mult(alpha,d)); 
         rp=substract(r,mult(alpha,z));
-        d= add(rp,mult((ps(rp,rp)/pow(beta,2)),d));
+        d= add(rp,mult((ps(rp,rp)/pow(beta,2)),d)); // reduction pour le ps rp 
         r=rp;
-        beta = norm(r);
+        beta = norm(r);  //racine de ps(rp,rp)
         //cout << beta << endl;
         k=k+1;
         //cout<<"k= "<<k<< "  beta= " << beta<< "  beta reel =" << norm(substract(b,matvec(dt,Nx, Ny,x))) << endl;

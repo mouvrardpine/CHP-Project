@@ -4,16 +4,45 @@
 #include <vector>
 #include <math.h>
 #include <string>
+#include <mpi.h>
 #include "fonction.h"
 #include "matrix_RHS.h"
 #include "solv_lin.h"
 
-
-int main()
+void charge(int *i1,int *iN, int me, int n, int Np)
 {
-    int Nx(12), Ny(16),k(0),kmax(1000);
-    double dt(0.1),dx,dy,D, Lx(1), Ly(1), tmax(5.0),eps(pow(10,-10)), t(0.);
-    std::vector<double> u(Nx*Ny,0),b(Nx*Ny,0),x0(Nx*Ny), uex(Nx*Ny,0), test(Nx*Ny,1), err(Nx*Ny,0);
+  int r = n%Np;
+  if (me<r)
+  {
+    *i1=me*(n/Np+1);
+    *iN= *i1 + (n/Np+1)-1;
+
+  }
+  else 
+  {
+    *i1=r+me*(n/Np);
+    *iN=*i1+(n/Np)-1;
+  }    
+}
+
+
+
+
+
+
+
+
+
+int main(int argc, char ** argv)
+{
+  int Nx(12), Ny(16),k(0),kmax(1000), i1,iN,me,np;
+  double dt(0.1),dx,dy,D, Lx(1), Ly(1), tmax(5.0),eps(pow(10,-10)), t(0.) ;
+  MPI_Status status ;
+  MPI_Init(&argc, &argv);
+  MPI_Comm_rank(MPI_COMM_WORLD,&me); 
+  MPI_Comm_size(MPI_COMM_WORLD,&np);
+  charge(&i1,&iN,me,Nx*Ny,np);
+  std::vector<double> u(iN-i1+1,0),b(Nx*Ny,0),x0(Nx*Ny), uex(Nx*Ny,0), test(Nx*Ny,1), err(Nx*Ny,0);
 
   dx=1./(Nx+1);
   dy=1./(Ny+1);
@@ -42,7 +71,7 @@ int main()
          {
            std::cout<< u[k]<<std :: endl;
         }
-*/        // err= substract(u,uex);
+        */        // err= substract(u,uex);
 
         string filename("Output/sol_" +to_string(int(t/dt))+".dat");
         fstream file_out;
@@ -76,7 +105,7 @@ int main()
       }
 
 
-
+    MPI_Finalize(); 
     return 0;
 
 }
