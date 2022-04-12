@@ -61,7 +61,7 @@ std::vector<double> RHS( double dt, int Nx, int Ny, std::vector<double> u, doubl
 	{
 		double x = (i%Nx+1)*dx, y = (i/Nx+1)*dy; // +1 a vérifier
 
-		F[i] = +dt*f1(x, y, t + dt, 1, 1. ,1.) + u[i];
+		F[i] = -dt*f1(x, y, t + dt, 1, 1. ,1.) + u[i];
 
 		if (x == dx || x == 1.-dx)
 		{
