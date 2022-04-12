@@ -47,32 +47,46 @@ std::vector<double> RHS( double dt, int Nx, int Ny, std::vector<double> u, doubl
 {
 	double dx = 1./(Nx+1) , dy = 1./(Ny+1);
 	double alpha = -2*dt*(1/(pow(dx,2)) +1 / pow(dy,2)) + 1 ;
-	double beta_x = - dt/pow(dx,2) , beta_y = - dt/pow(dy,2) ;
+	double beta_x = dt/pow(dx,2) , beta_y = dt/pow(dy,2) ;
 	std::vector<double> F(Nx*Ny,0.);
-
-
-	//for (int i = 0; i < Nx*Ny; i++)
-	//{
-
-		//F[i] = 0;
-	//}
+	int pb(2);
 
 	for (int i = 0; i < Nx*Ny ; ++i)
 	{
-		double x = (i%Nx+1)*dx, y = (i/Nx+1)*dy; // +1 a vérifier
+		double x = (i%Nx+1)*dx, y = (i/Nx+1)*dy; 
 
-		F[i] = dt*f1(x, y, t + dt, 1, 1. ,1.) + u[i];
+		F[i] = dt*f1(x, y, t + dt, pb, 1. ,1.) + u[i];
 
-		if (x == dx || x == 1.-dx)
+		if ((i+1)%Nx == 1)
 		{
-			F[i] += beta_x*h1(x,y,t+dt, 1);    // attention à refaire LES DEUX !!!!
+			F[i] += beta_x*h1(0,y,t+dt, pb);
 		}
 
-		if (y == dy || y == 1.-dy)
+		if ((i+1)%Nx == 0)
+		{
+			F[i] += beta_x*h1(1.,y,t+dt, pb);
+		}
+
+		if (i/Nx == 0)
+		{
+			F[i] += beta_y*g1(x,0,t+dt, pb);
+		}
+
+		if (i/Nx + 1 == Ny)
+		{
+			F[i] += beta_y*g1(x,1.,t+dt, pb);
+		}
+
+		/*if ( (x == dx) || (x == 1.- dx))
+		{
+			F[i] += beta_x*h1(x,y,t+dt, 1);   
+		}
+
+		if ( (y == dy) || (y == 1.-dy) )
 		{
 			F[i] += beta_y*g1(x,y,t+dt, 1);
-		}
-		//cout<< "x="<< x << "  y=  "<< y<< "   F="<< F[i]<< endl;
+		}*/
+
 	}
 
 	return F;

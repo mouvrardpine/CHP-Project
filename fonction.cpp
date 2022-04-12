@@ -15,8 +15,6 @@ double f1(double x, double y, double t, int pb, double Lx, double Ly)
     {
         return exp(-pow(x-(Lx/2),2))*exp(-pow(y-(Ly/2),2))*cos((3.14/2)*t);
     }
-    
-
 }
 
 
