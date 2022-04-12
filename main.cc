@@ -9,8 +9,8 @@
 
 int main()
 {
-    int Nx(12), Ny(16),k(0),kmax(1000);
-    double dt(0.5),dx,dy,D, Lx(1), Ly(1), tmax(5.0),eps(0.0001), t(0.);
+    int Nx(6), Ny(8),k(0),kmax(1000);
+    double dt(0.01),dx,dy,D, Lx(1), Ly(1), tmax(5.0),eps(0.0001), t(0.);
     std::vector<double> u(Nx*Ny,0),b(Nx*Ny,0),x0(Nx*Ny), uex(Nx*Ny,0), test(Nx*Ny,1), err(Nx*Ny,0);
     /* u=matvec(dt,Nx, Ny,test);
     for (int k(0); k<Nx*Ny; k++)
