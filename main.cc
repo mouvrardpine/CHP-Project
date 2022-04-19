@@ -39,8 +39,9 @@ int main(int argc, char ** argv)
 
   iN=ch->GetiN();
   i1=ch->Geti1();
+  int size = iN - i1 + 1;
 
-  std::vector<double> u(iN-i1+1,0),b(Nx*Ny,0),x0(Nx*Ny), uex(Nx*Ny,0), test(Nx*Ny,1), err(Nx*Ny,0);
+  std::vector<double> u(size,0),b(size,0),x0(size), uex(size,0), test(size,1), err(size,0);
 
   dx=1./(Nx+1);
   dy=1./(Ny+1);
@@ -51,8 +52,8 @@ int main(int argc, char ** argv)
   {
     for (int i(0);i<Nx+0; i++ )
     {
-      //uex[j*Nx+i]=(i+1)*dx*(1-(i+1)*dx)*(j+1)*dy*(1-(j+1)*dy);
-      uex[j*Nx+i]=sin((i+1)*dx) + cos((j+1)*dy);
+      uex[j*Nx+i]=(i+1)*dx*(1-(i+1)*dx)*(j+1)*dy*(1-(j+1)*dy);
+      //uex[j*Nx+i]=sin((i+1)*dx) + cos((j+1)*dy);
 
     }
   }
@@ -66,20 +67,16 @@ int main(int argc, char ** argv)
         u=sl->GC(u,b);
         cout << "t =" << t << endl;
 
-        string filename("Output/sol_" +to_string(int(t/dt))+".dat");
+        string filename("Output/sol" +to_string(int(t/dt))+ to_string(me) +".dat");
         fstream file_out;
 
         file_out.open(filename, std::ios_base::out);
         if (file_out) {
         
-        for (int j(0); j<Ny +0; j++)
-        {
-          for (int i(0);i<Nx+0; i++ )
+          for (int i(i1);i<=iN; i++ )
           {
-            file_out<< (i+1)*dx << " " << (j+1)*dy << " " << u[j*Nx+i] <<endl;
-
+            file_out<< (i%Nx+1)*dx << " " << (i/(Nx+1)*dy << " " << u[i] <<endl;
           }
-        }
 
 
 
@@ -93,9 +90,13 @@ int main(int argc, char ** argv)
           cout << "failed to open " << filename << '\n';
       
     }
+        if (me == 0)
+        {
+        cout << "err =" << normL2_2D(substract(u,uex), dx, dy) << endl;
+        }
+      
+    }
 
-        //cout << "err =" << normL2_2D(substract(u,uex), dx, dy) << endl;
-      }
 
 
     MPI_Finalize(); 
