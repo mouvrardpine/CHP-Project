@@ -97,3 +97,17 @@ void charge_ :: charge(int *i1,int *iN, int me, int n, int Np)
     *iN=*i1+(n/Np)-1;
   }    
 }
+
+int charge_ :: whichMe(int i)
+{
+    int i1, iN;
+    for (int k(0); k<_Np;k++)
+    {
+        charge(&i1,&iN,k,_n,_Np);
+        if (( _n<=iN )&&(_n>= i1))
+        {
+            return k;   
+        }
+    }
+    std::cout<<"erreur dans WhichME"<<std::endl;
+}
