@@ -19,10 +19,10 @@ matrix_RHS :: matrix_RHS(double dt , int Nx, int Ny, fonctions* fct,charge_* ch)
 std::vector<double>  matrix_RHS :: matvec(std::vector<double> x)
 {
 
-	double dx = 1./(_Nx+1) , dy = 1./(_Ny+1);
+	int he;
+	double dx = 1./(_Nx+1) , dy = 1./(_Ny+1), msg;
 	double alpha = 2*_dt*(1/(pow(dx,2)) +1 / pow(dy,2)) + 1 ;
 	double beta_x = - _dt/pow(dx,2) , beta_y = - _dt/pow(dy,2) ;
-	//cout << "alpha= "<< alpha << "	beta_x="<<beta_x<< "	beta_y="<<beta_y<<endl;
 	std::vector<double> Ax(_iN-_i1+1,0);
 
 	for (int i = _i1; i < 1+_iN ; ++i)
@@ -31,22 +31,66 @@ std::vector<double>  matrix_RHS :: matvec(std::vector<double> x)
 
 		if (i < _Nx*_Ny - _Nx)
 		{
-			Ax[i] += beta_y*x[i+_Nx];
+			if (i+_Nx > _iN)
+			{
+				he = whichMe(i+ _Nx);
+				MPI_Status Status;
+				MPI_Recv(&msg, 1, MPI_DOUBLE, he, 101, MPI_COMM_WORLD, &Status);
+				MPI_Send(&x[i], 1, MPI_DOUBLE, he, 102, MPI_COMM_WORLD);
+				Ax[i] += beta_y*&msg
+			}
+			else
+			{
+				Ax[i] += beta_y*x[i+_Nx];
+			}
 		}
 		if (i > _Nx-1)
 		{
-			Ax[i] += beta_y*x[i-_Nx];
+			if (i-_Nx < _i1)
+			{
+				he = whichMe(i- _Nx);
+				MPI_Status Status;
+				MPI_Recv(&msg , 1, MPI_DOUBLE, he, 201, MPI_COMM_WORLD, &Status);
+				MPI_Send(&x[i], 1, MPI_DOUBLE, he, 202, MPI_COMM_WORLD);
+				Ax[i] += beta_y*&msg
+			}
+			else
+			{
+				Ax[i] += beta_y*x[i-_Nx];
+			}
+			
 		}
 
 		if ((i+1)%_Nx != 0)
 		{
-			Ax[i] += beta_x*x[i+1];
+			if (i+1> _iN)
+			{
+				he = whichMe(i+1);
+				MPI_Status Status;
+				MPI_Recv(&msg , 1, MPI_DOUBLE, he, 301, MPI_COMM_WORLD, &Status);
+				MPI_Send(&x[i], 1, MPI_DOUBLE, he, 302, MPI_COMM_WORLD);
+				Ax[i] += beta_x*&msg;
+			}
+			else
+			{
+				Ax[i] += beta_x*x[i+1];
+			}
+			
+			
 		}
 		if (i%_Nx !=0 && i != 0)
+			if (i-1< _i1)
+			{
+				he = whichMe(i-1);
+				MPI_Status Status;
+				MPI_Recv(&msg , 1, MPI_DOUBLE, he, 401, MPI_COMM_WORLD, &Status);
+				MPI_Send(&x[i], 1, MPI_DOUBLE, he, 402, MPI_COMM_WORLD);
+				Ax[i] += beta_x*&msg;
+			}
+			else
 			{
 				Ax[i] += beta_x*x[i-1];
 			}
-
 	}
 
 	return Ax;
