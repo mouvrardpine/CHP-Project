@@ -18,6 +18,7 @@ public:
     double f1(double x, double y, double t); 
     double g1(double x, double y, double t); 
     double h1(double x, double y, double t);
+    double uex(double x, double y);
 
 };
 
@@ -31,7 +32,7 @@ public:
     charge_(int n);
     void charge(int *i1,int *iN, int me, int n, int Np);
     int whichMe (int i);
-    double uex(double x, double y);
+    
     int Geti1() {return _i1;};
     int GetiN() {return _iN;};
     int Getn() {return _n;};

@@ -75,7 +75,7 @@ int main(int argc, char ** argv)
         
           for (int i(i1);i<=iN; i++ )
           {
-            file_out<< (i%Nx+1)*dx << " " << (i/(Nx+1)*dy << " " << u[i] <<endl;
+            file_out<< (i%Nx+1)*dx << " " << (i/Nx+1)*dy << " " << u[i] <<endl;
           }
 
 
@@ -92,7 +92,7 @@ int main(int argc, char ** argv)
     }
         if (me == 0)
         {
-        cout << "err =" << normL2_2D(substract(u,uex), dx, dy) << endl;
+        cout << "err =" << sl->normL2_2D(sl->substract(u,uex), dx, dy) << endl;
         }
       
     }
