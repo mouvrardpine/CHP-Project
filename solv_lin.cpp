@@ -79,10 +79,10 @@ double solv_lin :: normL2_2D(vector<double> x, double dx, double dy)
     for (int i = 0; i < x.size(); i++) {
       res += pow(x[i],2);
     };
-
-    res = sqrt(res*dx*dy);
     MPI_Reduce(&res,&sum,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
-    return res;
+    sum = sqrt(sum*dx*dy);
+    
+    return sum;
 }
 
 std::vector<double> solv_lin :: GC(std::vector <double> x0 , std::vector <double> b )
