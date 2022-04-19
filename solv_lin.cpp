@@ -23,7 +23,7 @@ solv_lin :: solv_lin(int kmax, int Nx , int Ny , double eps , double dt, matrix_
     {
         res += x1[i]*x2[i];
     }
-    MPI_Reduce(&res,&sum,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+    MPI_Allreduce(&res,&sum,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
     return sum;
 
 }
@@ -79,7 +79,7 @@ double solv_lin :: normL2_2D(vector<double> x, double dx, double dy)
     for (int i = 0; i < x.size(); i++) {
       res += pow(x[i],2);
     };
-    MPI_Reduce(&res,&sum,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+    MPI_Allreduce(&res,&sum,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
     sum = sqrt(sum*dx*dy);
     
     return sum;

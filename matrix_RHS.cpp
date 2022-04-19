@@ -25,26 +25,27 @@ std::vector<double>  matrix_RHS :: matvec(std::vector<double> x)
 	double beta_x = - _dt/pow(dx,2) , beta_y = - _dt/pow(dy,2) ;
 	std::vector<double> Ax(_iN-_i1+1,0);
 
-	for (int i = _i1; i < 1+_iN ; ++i)
+	for (int i = _i1; i <= _iN; ++i)
 	{
-		Ax[i] = x[i]*alpha;
-
+		Ax[i-_i1] = x[i-_i1]*alpha;
+		cout<< "i= "<< i << " me "<< _me<<endl;
 		if (i < _Nx*_Ny - _Nx)
 		{
 			if (i+_Nx > _iN)
 			{
 				he = _ch->whichMe(i+ _Nx);
 				MPI_Status Status;
-				MPI_Send(&x[i], 1, MPI_DOUBLE, he, 101, MPI_COMM_WORLD);
-				//cout << "ok1" << endl;
+				//cout<<" me "<<_me << "  j'envoie à "<<he <<endl; 
+				MPI_Send(&x[i-_i1], 1, MPI_DOUBLE, he, 101, MPI_COMM_WORLD);
+				//cout<<" me "<<_me << "  j'attends à "<<he <<endl; 
 				MPI_Recv(&msg, 1, MPI_DOUBLE, he, 102, MPI_COMM_WORLD, &Status);
-				//cout << "ok2" << endl;
 				
-				Ax[i] += beta_y*msg;
+				
+				Ax[i-_i1] += beta_y*msg;
 			}
 			else
 			{
-				Ax[i] += beta_y*x[i+_Nx];
+				Ax[i-_i1] += beta_y*x[i-_i1+_Nx];
 			}
 		}
 		if (i > _Nx-1)
@@ -53,14 +54,16 @@ std::vector<double>  matrix_RHS :: matvec(std::vector<double> x)
 			{
 				he = _ch->whichMe(i- _Nx);
 				MPI_Status Status;
-				MPI_Send(&x[i], 1, MPI_DOUBLE, he, 102, MPI_COMM_WORLD);
+				//cout<<"me "<<_me << "ok2"<< " j'envoie à "<<he <<endl; 
+				MPI_Send(&x[i-_i1], 1, MPI_DOUBLE, he, 102, MPI_COMM_WORLD);
+				//cout<<"me "<<_me << "ok2"<< " j'attends à "<<he <<endl; 
 				MPI_Recv(&msg , 1, MPI_DOUBLE, he, 101, MPI_COMM_WORLD, &Status);
 				
-				Ax[i] += beta_y*msg;
+				Ax[i-_i1] += beta_y*msg;
 			}
 			else
 			{
-				Ax[i] += beta_y*x[i-_Nx];
+				Ax[i-_i1] += beta_y*x[i-_i1-_Nx];
 			}
 			
 		}
@@ -71,14 +74,16 @@ std::vector<double>  matrix_RHS :: matvec(std::vector<double> x)
 			{
 				he = _ch->whichMe(i+1);
 				MPI_Status Status;
-				MPI_Send(&x[i], 1, MPI_DOUBLE, he, 301, MPI_COMM_WORLD);
+				//cout<<"me "<<_me << "ok3"<< " j'envoie à "<<he <<endl; 
+				MPI_Send(&x[i-_i1], 1, MPI_DOUBLE, he, 301, MPI_COMM_WORLD);
+				//cout<<"me "<<_me << "ok3"<< " j'attends à "<<he <<endl; 
 				MPI_Recv(&msg , 1, MPI_DOUBLE, he, 302, MPI_COMM_WORLD, &Status);
 				
-				Ax[i] += beta_x*msg;
+				Ax[i-_i1] += beta_x*msg;
 			}
 			else
 			{
-				Ax[i] += beta_x*x[i+1];
+				Ax[i-_i1] += beta_x*x[i-_i1+1];
 			}
 			
 			
@@ -88,13 +93,17 @@ std::vector<double>  matrix_RHS :: matvec(std::vector<double> x)
 			{
 				he = _ch->whichMe(i-1);
 				MPI_Status Status;
-				MPI_Send(&x[i], 1, MPI_DOUBLE, he, 302, MPI_COMM_WORLD);
+				//cout<<"me "<<_me << "ok4"<< " j'envoie à "<<he <<endl; 
+				MPI_Send(&x[i-_i1], 1, MPI_DOUBLE, he, 302, MPI_COMM_WORLD);
+
+				//cout<<"me "<<_me << "ok4"<< " j'attends à "<<he <<endl; 
 				MPI_Recv(&msg , 1, MPI_DOUBLE, he, 301, MPI_COMM_WORLD, &Status);
-				Ax[i] += beta_x*msg;
+				
+				Ax[i-_i1] += beta_x*msg;
 			}
 			else
 			{
-				Ax[i] += beta_x*x[i-1];
+				Ax[i-_i1] += beta_x*x[i-_i1-1];
 			}
 	}
 

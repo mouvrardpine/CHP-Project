@@ -16,7 +16,7 @@
 
 int main(int argc, char ** argv)
 {
-  int Nx(12), Ny(16),k(0),kmax(1000), i1,iN,me,np,pb(1);
+  int Nx(3), Ny(4),k(0),kmax(1000), i1,iN,me,np,pb(1);
   double dt(0.1),dx,dy,D, Lx(1), Ly(1), tmax(5.0),eps(pow(10,-10)), t(0.) ;
   MPI_Status status ;
   MPI_Init(&argc, &argv);
@@ -57,16 +57,23 @@ int main(int argc, char ** argv)
 
     }
   } */
+  
     b=mRHS->RHS(u,t);
+    
     u=sl->GC(u,b);
-
+    
     while (t<tmax)
      {
         t += dt;
+        cout<<"----------------------------------------------------------------- t= "<< t<< "me="<<me<<" --------------------------"<<endl;
+        
         b=mRHS->RHS(u,t);
         
+
+        //pb ici
         u=sl->GC(u,b);
-        cout << "t =" << t << endl;
+        
+        //cout << "t =" << t << endl;
 
         string filename("Output/sol" +to_string(int(t/dt))+ to_string(me) +".dat");
         fstream file_out;
