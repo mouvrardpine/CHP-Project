@@ -30,6 +30,7 @@ private :
 public:
     charge_(int n);
     void charge(int *i1,int *iN, int me, int n, int Np);
+    int whichMe (int i);
     int Geti1() {return _i1;};
     int GetiN() {return _iN;};
     int Getn() {return _n;};
