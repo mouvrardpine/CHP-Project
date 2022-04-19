@@ -61,6 +61,24 @@ double fonctions :: h1(double x, double y, double t)
     }
 }
 
+double fonctions :: uex(double x, double y)
+{
+    if (_pb==1)
+    {
+        
+        return x*(1-x)*y*(1-y); 
+    }
+    else if (_pb==2)
+    {
+        return sin(x)+cos(y);
+    }
+    else
+    {
+        return 1;
+    }
+
+}
+
 charge_ :: charge_ (int n) : _n(n)
 {
     MPI_Comm_rank(MPI_COMM_WORLD,&_me);
