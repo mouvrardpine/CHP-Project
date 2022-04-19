@@ -5,7 +5,17 @@
 #include <iostream>
 
 using namespace std;
-double ps(vector <double> x1, vector <double> x2)
+
+solv_lin :: solv_lin(int kmax, int Nx , int Ny , double eps , double dt, matrix_RHS* mrhs,charge_* ch) : _kmax(kmax), _Nx(Nx) , _Ny(Ny), _eps(eps), _dt(dt) ,_mRHS(mrhs),_ch(ch)
+{
+    MPI_Comm_rank(MPI_COMM_WORLD,&_me); 
+  	MPI_Comm_size(MPI_COMM_WORLD,&_Np);
+	_i1= _ch->Geti1();
+	_n= _ch->Getn();
+	_iN= _ch->GetiN();
+}
+
+ double solv_lin :: ps(vector <double> x1, vector <double> x2)
 {
     double res(0) ;
     int n(x1.size());
@@ -17,7 +27,7 @@ double ps(vector <double> x1, vector <double> x2)
 
 }
 
-vector <double> substract(vector <double> x1, vector <double> x2)
+ vector <double> solv_lin :: substract(vector <double> x1, vector <double> x2)
 {
     int n(x1.size());
     vector<double> res(n,0) ;
@@ -31,7 +41,7 @@ vector <double> substract(vector <double> x1, vector <double> x2)
 }
 
 
-vector<double> add(vector <double> x1, vector <double> x2)
+ vector<double> solv_lin :: add(vector <double> x1, vector <double> x2)
 {
 int n(x1.size());
 vector<double> res(n,0) ;
@@ -45,12 +55,12 @@ vector<double> res(n,0) ;
 }
 
 
-double norm(vector<double> x)
+ double solv_lin :: norm(vector<double> x)
 {
     return sqrt(ps(x,x));
 }
 
-vector <double> mult(double a , vector<double> x)
+vector <double> solv_lin :: mult(double a , vector<double> x)
 {
     int n(x.size());
     vector<double> res(n,0);
@@ -62,7 +72,7 @@ vector <double> mult(double a , vector<double> x)
     return res ;
 }
 
-double normL2_2D(vector<double> x, double dx, double dy)
+double solv_lin :: normL2_2D(vector<double> x, double dx, double dy)
 {
   double res(0);
     for (int i = 0; i < x.size(); i++) {
@@ -73,19 +83,19 @@ double normL2_2D(vector<double> x, double dx, double dy)
     return res;
 }
 
-std::vector<double> GC(std::vector <double> x0 , std::vector <double> b , double eps , int kmax,int Nx, int Ny,double dt)
+std::vector<double> solv_lin :: GC(std::vector <double> x0 , std::vector <double> b )
 {
     int k(0), n(x0.size()), test1(2),test2(3); //test1  et test2 a supprimer : seulement pour esquiver bug de compilation
     vector<double> r(n,0),x(n,0), d(n,0), z(n,0), rp(n,0);
     double beta, gamma,alpha ;
 
     x=x0;
-    r=substract(b,matvec(dt,Nx, Ny,x,test1,test2));
+    r=substract(b,_mRHS->matvec(x));
     d=r;
     beta= norm(r); //reduction pour la norme de r
-    while ((beta>eps)&&(k<kmax))
+    while ((beta>_eps)&&(k<_kmax))
     {
-        z=matvec(dt,Nx,Ny,d,test1,test2);
+        z=_mRHS->matvec(d);
         gamma=beta*beta; 
         alpha=gamma/ps(z,d); //reduction pour le produit scalaire  !!!!!!!!!!!!!!!!!!!!!! vérification en print sur le gamma!!!!!!!!!!!!!!!!
         x=add(x,mult(alpha,d)); 
@@ -95,10 +105,10 @@ std::vector<double> GC(std::vector <double> x0 , std::vector <double> b , double
         beta = norm(r);  //racine de ps(rp,rp)
         //cout << beta << endl;
         k=k+1;
-        //cout<<"k= "<<k<< "  beta= " << beta<< "  beta reel =" << norm(substract(b,matvec(dt,Nx, Ny,x))) << endl;
+        //cout<<"k= "<<k<< "  beta= " << beta<< "  beta reel =" << norm(substract(b,matvec(_dt,_Nx, _Ny,x))) << endl;
     }
 
-    if (k>kmax)
+    if (k>_kmax)
     {
         printf("tolérance non atteinte");
     }
