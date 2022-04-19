@@ -17,13 +17,14 @@ solv_lin :: solv_lin(int kmax, int Nx , int Ny , double eps , double dt, matrix_
 
  double solv_lin :: ps(vector <double> x1, vector <double> x2)
 {
-    double res(0) ;
+    double res(0),sum(0) ;
     int n(x1.size());
     for (int i(0); i< n; i++)
     {
         res += x1[i]*x2[i];
     }
-    return res;
+    MPI_Reduce(&res,&sum,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+    return sum;
 
 }
 
@@ -74,12 +75,13 @@ vector <double> solv_lin :: mult(double a , vector<double> x)
 
 double solv_lin :: normL2_2D(vector<double> x, double dx, double dy)
 {
-  double res(0);
+  double res(0),sum(0);
     for (int i = 0; i < x.size(); i++) {
       res += pow(x[i],2);
     };
 
     res = sqrt(res*dx*dy);
+    MPI_Reduce(&res,&sum,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
     return res;
 }
 
