@@ -122,7 +122,7 @@ int charge_ :: whichMe(int i)
     for (int k(0); k<_Np;k++)
     {
         charge(&i1,&iN,k,_n,_Np);
-        if (( _n<=iN )&&(_n>= i1))
+        if (( i<=iN )&&(i>= i1))
         {
             return k;   
         }

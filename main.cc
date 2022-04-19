@@ -48,7 +48,7 @@ int main(int argc, char ** argv)
 
   //b=RHS(dt,Nx,Ny,u,dt*k);
   //u=GC(x0,b,eps,kmax,Nx,Ny,dt);
-  for (int j(0); j<Ny +0; j++)
+ /*  for (int j(0); j<Ny +0; j++)
   {
     for (int i(0);i<Nx+0; i++ )
     {
@@ -56,7 +56,7 @@ int main(int argc, char ** argv)
       //uex[j*Nx+i]=sin((i+1)*dx) + cos((j+1)*dy);
 
     }
-  }
+  } */
     b=mRHS->RHS(u,t);
     u=sl->GC(u,b);
 
@@ -64,6 +64,7 @@ int main(int argc, char ** argv)
      {
         t += dt;
         b=mRHS->RHS(u,t);
+        
         u=sl->GC(u,b);
         cout << "t =" << t << endl;
 
@@ -76,6 +77,7 @@ int main(int argc, char ** argv)
           for (int i(i1);i<=iN; i++ )
           {
             file_out<< (i%Nx+1)*dx << " " << (i/Nx+1)*dy << " " << u[i] <<endl;
+            //cout << i/Nx+1 << endl;
           }
 
 
@@ -90,10 +92,10 @@ int main(int argc, char ** argv)
           cout << "failed to open " << filename << '\n';
       
     }
-        if (me == 0)
+       /*  if (me == 0)
         {
         cout << "err =" << sl->normL2_2D(sl->substract(u,uex), dx, dy) << endl;
-        }
+        } */
       
     }
 
