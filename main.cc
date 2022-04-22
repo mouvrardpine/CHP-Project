@@ -41,10 +41,38 @@ int main(int argc, char ** argv)
   i1=ch->Geti1();
   int size = iN - i1 + 1;
 
-  std::vector<double> u(size,0),b(size,0),x0(size), uex(size,0), test(size,1), err(size,0);
+  std::vector<double> u(size,0),b(size,0),x0(size,1), uex(size,0), test(size,1), err(size,0), utest(Nx*Ny);
 
   dx=1./(Nx+1);
   dy=1./(Ny+1);
+  x0=mRHS->matvec(x0);
+  cout<< "me=   "<<me<<endl;
+  MPI_Status Status;
+  int i1b , iNb;
+  for (int k(0);k<x0.size();k++)
+  {
+    
+    utest[k+i1]=x0[k];
+
+  }
+  if (me==0)
+  {
+    for (int l(1);l<np;l++)
+    {
+      ch->charge(&i1b,&iNb,l,Nx*Ny,np);
+      MPI_Recv(&utest[i1b] , iN-i1+1, MPI_DOUBLE, l, 10, MPI_COMM_WORLD, &Status);
+    }
+    for (int f(0);f<Nx*Ny;f++)
+    {
+      cout<<utest[f]<<endl;
+    }
+  }
+  else
+  {
+    MPI_Send(&x0[0], iN-i1+1, MPI_DOUBLE, 0, 10, MPI_COMM_WORLD);
+  }
+
+  
 
   //b=RHS(dt,Nx,Ny,u,dt*k);
   //u=GC(x0,b,eps,kmax,Nx,Ny,dt);
@@ -58,7 +86,7 @@ int main(int argc, char ** argv)
     }
   } */
   
-    b=mRHS->RHS(u,t);
+    /* b=mRHS->RHS(u,t);
     
     u=sl->GC(u,b);
     
@@ -99,12 +127,12 @@ int main(int argc, char ** argv)
           cout << "failed to open " << filename << '\n';
       
     }
-       /*  if (me == 0)
+         if (me == 0)
         {
         cout << "err =" << sl->normL2_2D(sl->substract(u,uex), dx, dy) << endl;
-        } */
+        } 
       
-    }
+    } */
 
 
 
