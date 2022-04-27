@@ -1,0 +1,2 @@
+Salut loic comme tu pourras le constater il n'y a aps de bug à la compilation. Mais deux problème : quand tu lances avec plusieurs proc, notre erreur deviens un NaN ET un message d'erreur intervient à la toute fin. celui ce ne gêne pas à l'éxecution a priori, et j'ai testé il intevient au moment du finalize. 
+SAUCISSE 

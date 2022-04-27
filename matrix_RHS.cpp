@@ -28,7 +28,7 @@ std::vector<double>  matrix_RHS :: matvec(std::vector<double> x)
 	for (int i = _i1; i <= _iN; ++i)
 	{
 		Ax[i-_i1] = x[i-_i1]*alpha;
-		cout<< "i= "<< i << " me "<< _me<<endl;
+		//cout<< "i= "<< i << " me "<< _me<<endl;
 		if (i < _Nx*_Ny - _Nx)
 		{
 			if (i+_Nx > _iN)

@@ -17,7 +17,7 @@
 int main(int argc, char ** argv)
 {
   int Nx(3), Ny(4),k(0),kmax(1000), i1,iN,me,np,pb(1);
-  double dt(0.1),dx,dy,D, Lx(1), Ly(1), tmax(5.0),eps(pow(10,-10)), t(0.) ;
+  double dt(0.1),dx,dy,D, Lx(1), Ly(1), tmax(5.0),eps(pow(10,-10)), t(0.),err(0);
   MPI_Status status ;
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD,&me); 
@@ -41,15 +41,15 @@ int main(int argc, char ** argv)
   i1=ch->Geti1();
   int size = iN - i1 + 1;
 
-  std::vector<double> u(size,0),b(size,0),x0(size,1), uex(size,0), test(size,1), err(size,0), utest(Nx*Ny);
+  std::vector<double> u(size,0),b(size,0),x0(size,1), uex(size,0), test(size,1), utest(Nx*Ny),u1(size,0);
 
   dx=1./(Nx+1);
   dy=1./(Ny+1);
   x0=mRHS->matvec(x0);
-  cout<< "me=   "<<me<<endl;
+  //cout<< "me=   "<<me<<endl;
   MPI_Status Status;
   int i1b , iNb;
-  for (int k(0);k<x0.size();k++)
+  /* for (int k(0);k<x0.size();k++)
   {
     
     utest[k+i1]=x0[k];
@@ -70,13 +70,12 @@ int main(int argc, char ** argv)
   else
   {
     MPI_Send(&x0[0], iN-i1+1, MPI_DOUBLE, 0, 10, MPI_COMM_WORLD);
-  }
+  } */
 
   
 
-  //b=RHS(dt,Nx,Ny,u,dt*k);
-  //u=GC(x0,b,eps,kmax,Nx,Ny,dt);
- /*  for (int j(0); j<Ny +0; j++)
+  
+  for (int j(0); j<Ny +0; j++)
   {
     for (int i(0);i<Nx+0; i++ )
     {
@@ -84,11 +83,14 @@ int main(int argc, char ** argv)
       //uex[j*Nx+i]=sin((i+1)*dx) + cos((j+1)*dy);
 
     }
-  } */
-  
-    /* b=mRHS->RHS(u,t);
+  } 
     
-    u=sl->GC(u,b);
+    b=mRHS->RHS(u,t);
+    
+    u1=sl->GC(u,b);
+    
+    u=u1;
+    
     
     while (t<tmax)
      {
@@ -97,7 +99,7 @@ int main(int argc, char ** argv)
         
         b=mRHS->RHS(u,t);
         
-
+        cout<<"saucisse1 "<< me<<endl;
         //pb ici
         u=sl->GC(u,b);
         
@@ -114,25 +116,29 @@ int main(int argc, char ** argv)
             file_out<< (i%Nx+1)*dx << " " << (i/Nx+1)*dy << " " << u[i] <<endl;
             //cout << i/Nx+1 << endl;
           }
-
+        cout<<"saucisse2 "<< me<<endl;
 
 
         for (int k(0); k<Nx*Ny; k++)
          {
            file_out<< u[k]<<endl;
         }
+        cout<<"saucisse3 "<< me<<endl;
         //file_out << "Some random text to write." << endl;
         cout << "Done Writing!" << endl;
     } else {
           cout << "failed to open " << filename << '\n';
       
     }
+        err =sl->normL2_2D(sl->substract(u,uex), dx, dy);
          if (me == 0)
         {
-        cout << "err =" << sl->normL2_2D(sl->substract(u,uex), dx, dy) << endl;
+          
+          cout<<"err=  "<<err<<endl;
+        
         } 
       
-    } */
+    }
 
 
 

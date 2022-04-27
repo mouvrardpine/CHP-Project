@@ -88,32 +88,46 @@ double solv_lin :: normL2_2D(vector<double> x, double dx, double dy)
 std::vector<double> solv_lin :: GC(std::vector <double> x0 , std::vector <double> b )
 {
     int k(0), n(x0.size()), test1(2),test2(3); //test1  et test2 a supprimer : seulement pour esquiver bug de compilation
-    vector<double> r(n,0),x(n,0), d(n,0), z(n,0), rp(n,0);
+    vector<double> r(n,0),x(n,0),x1(n,0), d(n,0), z(n,0), rp(n,0),d1(n,0);
     double beta, gamma,alpha ;
 
     x=x0;
+    
     r=substract(b,_mRHS->matvec(x));
+    
     d=r;
     beta= norm(r); //reduction pour la norme de r
     while ((beta>_eps)&&(k<_kmax))
     {
+        
         z=_mRHS->matvec(d);
+        
         gamma=beta*beta; 
         alpha=gamma/ps(z,d); //reduction pour le produit scalaire  !!!!!!!!!!!!!!!!!!!!!! vérification en print sur le gamma!!!!!!!!!!!!!!!!
-        x=add(x,mult(alpha,d)); 
+        
+        x1=add(x,mult(alpha,d));
+        
+        x=x1; 
+       
         rp=substract(r,mult(alpha,z));
-        d= add(rp,mult((ps(rp,rp)/pow(beta,2)),d)); // reduction pour le ps rp 
+       
+        d1= add(rp,mult((ps(rp,rp)/pow(beta,2)),d));
+        //cout<< "saucisse7 "<< _me <<" k= "<< k<<endl;
+        d=d1; // reduction pour le ps rp 
         r=rp;
-        beta = norm(r);  //racine de ps(rp,rp)
+        beta = norm(r);
+          //racine de ps(rp,rp)
         //cout << beta << endl;
         k=k+1;
+          //racine de ps(rp,rp)
         //cout<<"k= "<<k<< "  beta= " << beta<< "  beta reel =" << norm(substract(b,matvec(_dt,_Nx, _Ny,x))) << endl;
     }
-
+    //cout<<"saucisse10"<<endl;
     if (k>_kmax)
     {
         printf("tolérance non atteinte");
     }
+    //cout<<x.size()<<endl;
     return x;
 
 }
