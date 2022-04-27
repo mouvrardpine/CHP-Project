@@ -99,23 +99,24 @@ std::vector<double> solv_lin :: GC(std::vector <double> x0 , std::vector <double
     beta= norm(r); //reduction pour la norme de r
     while ((beta>_eps)&&(k<_kmax))
     {
-        
+        cout<<"saucisse1"<<_me<<endl;
         z=_mRHS->matvec(d);
-        
+        cout<<"saucisse2"<<_me<<endl;
         gamma=beta*beta; 
         alpha=gamma/ps(z,d); //reduction pour le produit scalaire  !!!!!!!!!!!!!!!!!!!!!! vérification en print sur le gamma!!!!!!!!!!!!!!!!
-        
+        cout<<"saucisse3"<<_me<<endl;
         x1=add(x,mult(alpha,d));
-        
+        cout<<"saucisse4"<<_me<<endl;
         x=x1; 
-       
+        cout<<"saucisse5"<<_me<<endl;
         rp=substract(r,mult(alpha,z));
-       
+        cout<<"saucisse6"<<_me<<endl;
         d1= add(rp,mult((ps(rp,rp)/pow(beta,2)),d));
         //cout<< "saucisse7 "<< _me <<" k= "<< k<<endl;
         d=d1; // reduction pour le ps rp 
         r=rp;
         beta = norm(r);
+        cout<<"saucisse7"<<_me<<endl;
           //racine de ps(rp,rp)
         //cout << beta << endl;
         k=k+1;

@@ -22,7 +22,7 @@ int main(int argc, char ** argv)
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD,&me); 
   MPI_Comm_size(MPI_COMM_WORLD,&np);
-
+  
 
   //-----initialisation objets-----
   fonctions* fct;
@@ -36,16 +36,18 @@ int main(int argc, char ** argv)
 
   solv_lin* sl;
   sl= new solv_lin(kmax,Nx , Ny ,eps ,dt,mRHS,ch);
-
+  cout<<"UwU"<<endl;
   iN=ch->GetiN();
   i1=ch->Geti1();
+  cout<<"UwU1"<<endl;
   int size = iN - i1 + 1;
-
+  cout<<"UwU2"<<endl;
   std::vector<double> u(size,0),b(size,0),x0(size,1), uex(size,0), test(size,1), utest(Nx*Ny),u1(size,0);
 
   dx=1./(Nx+1);
   dy=1./(Ny+1);
   x0=mRHS->matvec(x0);
+  cout<<"UwU3"<<endl;
   //cout<< "me=   "<<me<<endl;
   MPI_Status Status;
   int i1b , iNb;
@@ -100,7 +102,7 @@ int main(int argc, char ** argv)
         b=mRHS->RHS(u,t);
         
         cout<<"saucisse1 "<< me<<endl;
-        //pb ici
+        
         u=sl->GC(u,b);
         
         //cout << "t =" << t << endl;

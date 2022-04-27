@@ -35,9 +35,9 @@ std::vector<double>  matrix_RHS :: matvec(std::vector<double> x)
 			{
 				he = _ch->whichMe(i+ _Nx);
 				MPI_Status Status;
-				//cout<<" me "<<_me << "  j'envoie à "<<he <<endl; 
+				cout<<" me "<<_me << "  j'envoie à "<<he <<" saucisse1"<<endl; 
 				MPI_Send(&x[i-_i1], 1, MPI_DOUBLE, he, 101, MPI_COMM_WORLD);
-				//cout<<" me "<<_me << "  j'attends à "<<he <<endl; 
+				cout<<" me "<<_me << "  j'attends à "<<he <<" saucisse1"<<endl; 
 				MPI_Recv(&msg, 1, MPI_DOUBLE, he, 102, MPI_COMM_WORLD, &Status);
 				
 				
@@ -54,9 +54,9 @@ std::vector<double>  matrix_RHS :: matvec(std::vector<double> x)
 			{
 				he = _ch->whichMe(i- _Nx);
 				MPI_Status Status;
-				//cout<<"me "<<_me << "ok2"<< " j'envoie à "<<he <<endl; 
+				cout<<"me "<<_me << " ok2 "<< " j'envoie à "<<he <<endl; 
 				MPI_Send(&x[i-_i1], 1, MPI_DOUBLE, he, 102, MPI_COMM_WORLD);
-				//cout<<"me "<<_me << "ok2"<< " j'attends à "<<he <<endl; 
+				cout<<"me "<<_me << " ok2 "<< " j'attends à "<<he <<endl; 
 				MPI_Recv(&msg , 1, MPI_DOUBLE, he, 101, MPI_COMM_WORLD, &Status);
 				
 				Ax[i-_i1] += beta_y*msg;
@@ -74,9 +74,9 @@ std::vector<double>  matrix_RHS :: matvec(std::vector<double> x)
 			{
 				he = _ch->whichMe(i+1);
 				MPI_Status Status;
-				//cout<<"me "<<_me << "ok3"<< " j'envoie à "<<he <<endl; 
+				cout<<"me "<<_me << " ok3 "<< " j'envoie à "<<he <<endl; 
 				MPI_Send(&x[i-_i1], 1, MPI_DOUBLE, he, 301, MPI_COMM_WORLD);
-				//cout<<"me "<<_me << "ok3"<< " j'attends à "<<he <<endl; 
+				cout<<"me "<<_me << " ok3 "<< " j'attends à "<<he <<endl; 
 				MPI_Recv(&msg , 1, MPI_DOUBLE, he, 302, MPI_COMM_WORLD, &Status);
 				
 				Ax[i-_i1] += beta_x*msg;
@@ -93,10 +93,10 @@ std::vector<double>  matrix_RHS :: matvec(std::vector<double> x)
 			{
 				he = _ch->whichMe(i-1);
 				MPI_Status Status;
-				//cout<<"me "<<_me << "ok4"<< " j'envoie à "<<he <<endl; 
+				cout<<"me "<<_me << " ok 4 "<< " j'envoie à "<<he <<endl; 
 				MPI_Send(&x[i-_i1], 1, MPI_DOUBLE, he, 302, MPI_COMM_WORLD);
 
-				//cout<<"me "<<_me << "ok4"<< " j'attends à "<<he <<endl; 
+				cout<<"me "<<_me << " ok4 " << " j'attends à "<<he <<endl; 
 				MPI_Recv(&msg , 1, MPI_DOUBLE, he, 301, MPI_COMM_WORLD, &Status);
 				
 				Ax[i-_i1] += beta_x*msg;
