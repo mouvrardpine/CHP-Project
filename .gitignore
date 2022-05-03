@@ -1,6 +1,2 @@
-prout
-*.out
 *.gch
-*json
-*.dat
-seq
+.gitignore
