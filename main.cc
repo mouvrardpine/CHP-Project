@@ -16,8 +16,8 @@
 
 int main(int argc, char ** argv)
 {
-  int Nx(3), Ny(4),k(0),kmax(1000), i1,iN,me,np,pb(1);
-  double dt(0.1),dx,dy,D, Lx(1), Ly(1), tmax(5.0),eps(pow(10,-10)), t(0.),err(0);
+  int Nx(3), Ny(4),k(0),kmax(2), i1,iN,me,np,pb(1);
+  double dt(0.1),dx,dy,D, Lx(1), Ly(1), tmax(5.0),eps(pow(10,-3)), t(0.),err(0);
   MPI_Status status ;
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD,&me);
@@ -94,7 +94,7 @@ int main(int argc, char ** argv)
     u=u1;
 
 
-  while (t<tmax)
+  /*while (t<tmax)
      {
         t += dt;
         cout<<"-------------------- t= "<< t<< "me="<<me<<" --------------------------"<<endl;
@@ -140,9 +140,7 @@ int main(int argc, char ** argv)
 
         }
 
-    }
-
-
+    }*/
 
     MPI_Finalize();
     return 0;
