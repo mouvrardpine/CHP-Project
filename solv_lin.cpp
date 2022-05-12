@@ -71,8 +71,8 @@ double normL2_2D(vector<double> x, double dx, double dy)
     for (int i = 0; i < x.size(); i++) {
       res += pow(x[i],2);
     };
-    MPI_Allreduce(&res,&sum,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
-    sum = sqrt(sum*dx*dy);
+   // MPI_Allreduce(&res,&sum,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
+    sum = sqrt(res*dx*dy);
     
     return sum;
 }
@@ -98,16 +98,16 @@ std::vector<double> GC(std::vector <double> x0 , std::vector <double> b, int i1,
     MPI_Allreduce(&beta_part,&beta,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
     beta = sqrt(beta);
   
-   // cout<<"beta = " << beta<<endl;
-    while (cond1<1)
+   //cout<< "k = " << k << " me = " << me << " beta = " << beta<<endl;
+    while ((beta>eps)&&(k<kmax))
     {
         //cout<<"saucisse1"<<_me<<endl;
         z=matvec(d, i1, iN,me, Nx,Ny,Np,dt);
         //cout<<"saucisse2"<<_me<<endl;
         gamma_part=ps(r,r); 
-        cout<<"k= "<<k <<"me = "<<me<< "gamma_part = " << gamma_part << endl;
+        //cout<<"k= "<<k <<"me = "<<me<< "gamma_part = " << gamma_part << endl;
         MPI_Allreduce(&gamma_part,&gamma,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
-        cout<<"k= "<<k<<"me = "<<me<< "gamma = " << gamma << endl;
+        //cout<<"k= "<<k<<"me = "<<me<< "gamma = " << gamma << endl;
         alpha_inter_part=ps(z,d); 
         MPI_Allreduce(&alpha_inter_part,&alpha_inter,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
         
@@ -130,20 +130,20 @@ std::vector<double> GC(std::vector <double> x0 , std::vector <double> b, int i1,
         beta = sqrt(beta);
         //cout<<"saucisse7"<<_me<<endl;
           //racine de ps(rp,rp)
-        //cout << beta << endl;
+        //cout<< "k = " << k << " me = " << me << " beta = " << beta<<endl;
         k=k+1;
           //racine de ps(rp,rp)
         //cout<<"k= "<<k<< "  beta= " << beta<< "  beta reel =" << norm(substract(b,matvec(_dt,_Nx, _Ny,x))) << endl;
-        if(!((beta>eps)&&(k<kmax)))
+        /* if(!((beta>eps)&&(k<kmax)))
         {
             cond=1;
-        }
-        MPI_Allreduce(&cond,&cond1,1,MPI_INT,MPI_PROD,MPI_COMM_WORLD);
-        //cout<<"k = " << k <<"beta = " << beta << "me" << _me <<endl;
+        } */
+        //MPI_Allreduce(&cond,&cond1,1,MPI_INT,MPI_PROD,MPI_COMM_WORLD);
+        
         //cout<< "k = " << k << " me = " << _me <<" gamma = " << gamma << " alpha = "<<alpha<<"beta = " << beta <<endl;
 
     }
-    
+    //cout<<"k = " << k <<"beta = " << beta << "me" << me <<endl;
     //cout<<"saucisse10"<<endl;
     if (k>kmax)
     {

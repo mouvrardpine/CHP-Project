@@ -56,7 +56,6 @@ double uex(double x, double y, int pb)
 {
     if (pb==1)
     {
-
         return x*(1-x)*y*(1-y);
     }
     else if (pb==2)
