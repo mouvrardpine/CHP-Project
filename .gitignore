@@ -1,2 +1,5 @@
 *.gch
+*.dat
+prout
+seq
 .gitignore
