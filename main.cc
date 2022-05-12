@@ -46,8 +46,8 @@ int main(int argc, char ** argv)
 
   dx=1./(Nx+1);
   dy=1./(Ny+1);
-  // x0=mRHS->matvec(x0);
-  // //cout<<"UwU3"<<endl;
+  //x0=mRHS->matvec(x0, i1, iN, me, Nx,Ny,Np,dt);
+  //cout<<"UwU3"<<endl;
   // //cout<< "me=   "<<me<<endl;
   // MPI_Status Status;
   // int i1b , iNb;
@@ -87,7 +87,7 @@ int main(int argc, char ** argv)
     }
   }
 
-    b=mRHS->RHS(u,t);
+    b=mRHS->RHS(u,t,i1,iN,me,Nx,Ny,dt);
 
     u1=sl->GC(u,b);
 
@@ -99,7 +99,7 @@ int main(int argc, char ** argv)
         t += dt;
         cout<<"-------------------- t= "<< t<< "me="<<me<<" --------------------------"<<endl;
 
-        b=mRHS->RHS(u,t);
+        b=mRHS->RHS(u,t,i1,iN,me,Nx,Ny,dt);
 
         cout<<"RHS_"<< me<<endl;
 
