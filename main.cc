@@ -11,7 +11,7 @@
 
 int main(int argc, char ** argv)
 {
-  int Nx(3), Ny(4),k(0),kmax(2), i1,iN,me,np,pb(1);
+  int Nx(3), Ny(4),k(0),kmax(2), i1,iN,me,Np,pb(1);
   double dt(0.1),dx,dy,D, Lx(1), Ly(1), tmax(5.0),eps(pow(10,-3)), t(0.),err(0);
   MPI_Status status ;
   MPI_Init(&argc, &argv);
@@ -21,17 +21,14 @@ int main(int argc, char ** argv)
 
   //-----initialisation objets-----
 
-  matrix_RHS* mRHS;
-  mRHS = new matrix_RHS(dt,Nx,Ny,fct,ch);
-
   //solv_lin* sl;
   //sl= new solv_lin(kmax,Nx , Ny ,eps ,dt,mRHS,ch);
- 
-  charge(int i1,int iN, int me, int n, int Np);
+  int n = Nx*Ny;
+  //cout << n << endl;
+  charge(&i1,&iN, me,n,Np);
  
   int size = iN - i1 + 1;
-
-  std::vector<double> u(size,0),b(size,0),x0(size,1), uex(size,0), test(size,1), utest(Nx*Ny),u1(size,0);
+  std::vector<double> u(size,0),b(size,0),x0(size,1), uex(size,0), test(size,1), utest(n),u1(size,0);
 
   dx=1./(Nx+1);
   dy=1./(Ny+1);
@@ -69,21 +66,23 @@ int main(int argc, char ** argv)
       x0[i] = 2.;
     }
   }
+ 
   x0=matvec(x0, i1, iN, me, Nx,Ny,Np,dt);
   //cout<< "me=   "<<me<<endl;
   MPI_Status Status;
   int i1b , iNb;
+ 
   for (int k(0);k<x0.size();k++)
   {
-  
     utest[k+i1]=x0[k];
-  
+    //cout << "k = " << k + i1 << endl;
   }
+  
   if (me==0)
   {
-    for (int l(1);l<np;l++)
+    for (int l(1);l<Np;l++)
     {
-      charge(&i1b,&iNb,l,Nx*Ny,np);
+      charge(&i1b,&iNb,l,n,Np);
       MPI_Recv(&utest[i1b] , iN-i1+1, MPI_DOUBLE, l, 10, MPI_COMM_WORLD, &Status);
     }
     for (int f(0);f<Nx*Ny;f++)
@@ -96,9 +95,6 @@ int main(int argc, char ** argv)
     MPI_Send(&x0[0], iN-i1+1, MPI_DOUBLE, 0, 10, MPI_COMM_WORLD);
   }
 
-
-
-
     for (int j(0); j<Ny +0; j++)
   {
     for (int i(0);i<Nx+0; i++ )
@@ -109,7 +105,8 @@ int main(int argc, char ** argv)
     }
   }
 
-    b=RHS(u,t,i1,iN,me,Nx,Ny,dt);
+  b=RHS(u,t,Nx,Ny,Lx,Ly,dt);
+  
 
     // u1=sl->GC(u,b);
 

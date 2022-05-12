@@ -70,21 +70,20 @@ double uex(double x, double y, int pb)
 
 }
 
-void charge(int i1,int iN, int me, int n, int Np)
+void charge(int *i1,int *iN, int me, int n, int Np)
 {
   int r = n%Np;
   if (me<r)
   {
-    i1 = me*(n/Np+1);
-    iN = i1 + (n/Np+1)-1;
+    *i1=me*(n/Np+1);
+    *iN= *i1 + (n/Np+1)-1;
 
   }
   else
   {
-    i1 = r +me*(n/Np);
-    iN = i1+(n/Np)-1;
-  }
-
+    *i1=r+me*(n/Np);
+    *iN=*i1+(n/Np)-1;
+  }    
 }
 
 // int charge_ :: whichMe(int i)

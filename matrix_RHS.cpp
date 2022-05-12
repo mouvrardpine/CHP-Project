@@ -1,5 +1,4 @@
 #ifndef _MATRIX_RHS_CPP
-
 #include "matrix_RHS.h"
 #include "fonction.h"
 #include <cmath>
@@ -8,7 +7,7 @@
 using namespace std;
 
 
-std::vector<double>  matrix_RHS :: matvec(std::vector<double> x, int i1, int iN, int me,int Nx,int Ny,int Np, double dt)
+std::vector<double>   matvec(std::vector<double> x, int i1, int iN, int me,int Nx,int Ny,int Np, double dt)
 {
 
 	int he, size(iN-i1+1);
@@ -80,7 +79,7 @@ std::vector<double>  matrix_RHS :: matvec(std::vector<double> x, int i1, int iN,
 	return Ax;
 }
 
-std::vector<double> matrix_RHS :: RHS( std::vector<double> u, double t, int i1, int iN, int me, int Nx, int Ny, double dt )
+std::vector<double> RHS( std::vector<double> u, double t, int Nx, int Ny, double Lx, double Ly, double dt )
 {
 	double dx = 1./(Nx+1) , dy = 1./(Ny+1);
 	double alpha = -2*dt*(1/(pow(dx,2)) +1 / pow(dy,2)) + 1 ;
@@ -92,26 +91,26 @@ std::vector<double> matrix_RHS :: RHS( std::vector<double> u, double t, int i1, 
 	{
 		double x = (i%Nx+1)*dx, y = (i/Nx+1)*dy;
 
-		F[i] = dt*_fct->f1(x, y, t + dt) + u[i];
+		F[i] = dt*f1(x, y, t + dt, pb, Lx, Ly) + u[i];
 
 		if ((i+1)%Nx == 1)
 		{
-			F[i] += beta_x*_fct->h1(0,y,t+dt);
+			F[i] += beta_x* h1(0,y,pb);
 		}
 
 		if ((i+1)%Nx == 0)
 		{
-			F[i] += beta_x*_fct->h1(1.,y,t+dt);
+			F[i] += beta_x* h1(1.,y,pb);
 		}
 
 		if (i/Nx == 0)
 		{
-			F[i] += beta_y*_fct->g1(x,0,t+dt);
+			F[i] += beta_y* g1(x,0,pb);
 		}
 
 		if (i/Nx + 1 == Ny)
 		{
-			F[i] += beta_y*_fct->g1(x,1.,t+dt);
+			F[i] += beta_y* g1(x,1.,pb);
 		}
 
 		/*if ( (x == dx) || (x == 1.- dx))

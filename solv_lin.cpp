@@ -77,14 +77,15 @@ double normL2_2D(vector<double> x, double dx, double dy)
     return sum;
 }
 
-std::vector<double> GC(std::vector <double> x0 , std::vector <double> b )
+std::vector<double> GC(std::vector <double> x0 , std::vector <double> b, int i1, int iN, int kmax,int me, int Nx, int Ny, int Np, double dt, double eps )
 {
     int k(0), n(x0.size()), test1(2),test2(3),cond(0),cond1; //test1  et test2 a supprimer : seulement pour esquiver bug de compilation
     vector<double> r(n,0),x(n,0),x1(n,0), d(n,0), z(n,0), rp(n,0),d1(n,0);
     double beta, gamma,alpha, beta_part, gamma_part, alpha_part, alpha_inter_part, alpha_inter, tau_part, tau ;
 
     x=x0;
-    r=substract(b,matvec(x));
+    //charge(i1, iN, me, n, Np)
+    r=substract(b,matvec(x, i1, iN, me, Nx, Ny, Np, dt));
     d=r;
 
     /* for (int k(0);k<r.size();k++)
@@ -101,12 +102,12 @@ std::vector<double> GC(std::vector <double> x0 , std::vector <double> b )
     while (cond1<1)
     {
         //cout<<"saucisse1"<<_me<<endl;
-        z=matvec(d);
+        z=matvec(d, i1, iN,me, Nx,Ny,Np,dt);
         //cout<<"saucisse2"<<_me<<endl;
         gamma_part=ps(r,r); 
-        cout<<"k= "<<k <<"me = "<<_me<< "gamma_part = " << gamma_part << endl;
+        cout<<"k= "<<k <<"me = "<<me<< "gamma_part = " << gamma_part << endl;
         MPI_Allreduce(&gamma_part,&gamma,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
-        cout<<"k= "<<k<<"me = "<<_me<< "gamma = " << gamma << endl;
+        cout<<"k= "<<k<<"me = "<<me<< "gamma = " << gamma << endl;
         alpha_inter_part=ps(z,d); 
         MPI_Allreduce(&alpha_inter_part,&alpha_inter,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
         
@@ -133,7 +134,7 @@ std::vector<double> GC(std::vector <double> x0 , std::vector <double> b )
         k=k+1;
           //racine de ps(rp,rp)
         //cout<<"k= "<<k<< "  beta= " << beta<< "  beta reel =" << norm(substract(b,matvec(_dt,_Nx, _Ny,x))) << endl;
-        if(!((beta>_eps)&&(k<_kmax)))
+        if(!((beta>eps)&&(k<kmax)))
         {
             cond=1;
         }
@@ -144,7 +145,7 @@ std::vector<double> GC(std::vector <double> x0 , std::vector <double> b )
     }
     
     //cout<<"saucisse10"<<endl;
-    if (k>_kmax)
+    if (k>kmax)
     {
         printf("tolérance non atteinte");
     }

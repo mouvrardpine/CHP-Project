@@ -10,7 +10,7 @@
     fonctions* _fct;
     charge_* _ch; */
     std::vector<double> matvec(std::vector<double> x, int i1, int iN, int me,int Nx,int Ny,int Np, double dt);
-    std::vector<double> RHS( std::vector<double> u, double t, int i1, int iN, int me, int Nx, int Ny, double dt )
+    std::vector<double> RHS( std::vector<double> u, double t,  int Nx, int Ny, double Lx, double Ly,double dt );
 
 #define _MATRIX_RHS_H
 #endif
