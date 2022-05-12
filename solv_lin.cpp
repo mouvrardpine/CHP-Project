@@ -6,16 +6,7 @@
 
 using namespace std;
 
-solv_lin :: solv_lin(int kmax, int Nx , int Ny , double eps , double dt, matrix_RHS* mrhs,charge_* ch) : _kmax(kmax), _Nx(Nx) , _Ny(Ny), _eps(eps), _dt(dt) ,_mRHS(mrhs),_ch(ch)
-{
-    MPI_Comm_rank(MPI_COMM_WORLD,&_me); 
-  	MPI_Comm_size(MPI_COMM_WORLD,&_Np);
-	_i1= _ch->Geti1();
-	_n= _ch->Getn();
-	_iN= _ch->GetiN();
-}
-
- double solv_lin :: ps(vector <double> x1, vector <double> x2)
+double ps(vector <double> x1, vector <double> x2)
 {
     double res(0),sum(0) ;
     int n(x1.size());
@@ -29,7 +20,7 @@ solv_lin :: solv_lin(int kmax, int Nx , int Ny , double eps , double dt, matrix_
     
 }
 
- vector <double> solv_lin :: substract(vector <double> x1, vector <double> x2)
+ vector <double> substract(vector <double> x1, vector <double> x2)
 {
     int n(x1.size());
     vector<double> res(n,0) ;
@@ -43,7 +34,7 @@ solv_lin :: solv_lin(int kmax, int Nx , int Ny , double eps , double dt, matrix_
 }
 
 
- vector<double> solv_lin :: add(vector <double> x1, vector <double> x2)
+ vector<double> add(vector <double> x1, vector <double> x2)
 {
 int n(x1.size());
 vector<double> res(n,0) ;
@@ -57,12 +48,12 @@ vector<double> res(n,0) ;
 }
 
 
- double solv_lin :: norm(vector<double> x)
+ double norm(vector<double> x)
 {
     return sqrt(ps(x,x));
 }
 
-vector <double> solv_lin :: mult(double a , vector<double> x)
+vector <double> mult(double a , vector<double> x)
 {
     int n(x.size());
     vector<double> res(n,0);
@@ -74,7 +65,7 @@ vector <double> solv_lin :: mult(double a , vector<double> x)
     return res ;
 }
 
-double solv_lin :: normL2_2D(vector<double> x, double dx, double dy)
+double normL2_2D(vector<double> x, double dx, double dy)
 {
   double res(0),sum(0);
     for (int i = 0; i < x.size(); i++) {
@@ -86,14 +77,14 @@ double solv_lin :: normL2_2D(vector<double> x, double dx, double dy)
     return sum;
 }
 
-std::vector<double> solv_lin :: GC(std::vector <double> x0 , std::vector <double> b )
+std::vector<double> GC(std::vector <double> x0 , std::vector <double> b )
 {
     int k(0), n(x0.size()), test1(2),test2(3),cond(0),cond1; //test1  et test2 a supprimer : seulement pour esquiver bug de compilation
     vector<double> r(n,0),x(n,0),x1(n,0), d(n,0), z(n,0), rp(n,0),d1(n,0);
     double beta, gamma,alpha, beta_part, gamma_part, alpha_part, alpha_inter_part, alpha_inter, tau_part, tau ;
 
     x=x0;
-    r=substract(b,_mRHS->matvec(x));
+    r=substract(b,matvec(x));
     d=r;
 
     /* for (int k(0);k<r.size();k++)
@@ -110,7 +101,7 @@ std::vector<double> solv_lin :: GC(std::vector <double> x0 , std::vector <double
     while (cond1<1)
     {
         //cout<<"saucisse1"<<_me<<endl;
-        z=_mRHS->matvec(d);
+        z=matvec(d);
         //cout<<"saucisse2"<<_me<<endl;
         gamma_part=ps(r,r); 
         cout<<"k= "<<k <<"me = "<<_me<< "gamma_part = " << gamma_part << endl;
@@ -161,8 +152,6 @@ std::vector<double> solv_lin :: GC(std::vector <double> x0 , std::vector <double
     return x;
 
 }
-
-
 
 #define _SOLV_LIN_CPP
 #endif

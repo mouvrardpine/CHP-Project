@@ -119,7 +119,7 @@ std::vector<double> matrix_RHS :: RHS( std::vector<double> u, double t)
 
 		if (i/_Nx + 1 == _Ny)
 		{
-			F[i] += beta_y*_fct->g1(x,1.,t+_dt);
+		//	F[i] += beta_y*_fct->g1(x,1.,t+_dt);
 		}
 
 		/*if ( (x == dx) || (x == 1.- dx))
