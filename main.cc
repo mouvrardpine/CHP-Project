@@ -9,11 +9,6 @@
 #include "matrix_RHS.h"
 #include "solv_lin.h"
 
-
-
-
-
-
 int main(int argc, char ** argv)
 {
   int Nx(3), Ny(4),k(0),kmax(2), i1,iN,me,np,pb(1);
@@ -21,27 +16,21 @@ int main(int argc, char ** argv)
   MPI_Status status ;
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD,&me);
-  MPI_Comm_size(MPI_COMM_WORLD,&np);
+  MPI_Comm_size(MPI_COMM_WORLD,&Np);
 
 
   //-----initialisation objets-----
-  fonctions* fct;
-  fct =new fonctions(pb,Lx,Ly);
-
-  charge_* ch;
-  ch = new charge_(Nx*Ny);
 
   matrix_RHS* mRHS;
   mRHS = new matrix_RHS(dt,Nx,Ny,fct,ch);
 
-  solv_lin* sl;
-  sl= new solv_lin(kmax,Nx , Ny ,eps ,dt,mRHS,ch);
-  //cout<<"UwU"<<endl;
-  iN=ch->GetiN();
-  i1=ch->Geti1();
-  //cout<<"UwU1"<<endl;
+  //solv_lin* sl;
+  //sl= new solv_lin(kmax,Nx , Ny ,eps ,dt,mRHS,ch);
+ 
+  charge(int i1,int iN, int me, int n, int Np);
+ 
   int size = iN - i1 + 1;
-  //cout<<"UwU2"<<endl;
+
   std::vector<double> u(size,0),b(size,0),x0(size,1), uex(size,0), test(size,1), utest(Nx*Ny),u1(size,0);
 
   dx=1./(Nx+1);
@@ -74,6 +63,39 @@ int main(int argc, char ** argv)
   //   MPI_Send(&x0[0], iN-i1+1, MPI_DOUBLE, 0, 10, MPI_COMM_WORLD);
   // }
 
+  for (int i = 0; i < Nx*Ny; i++) {
+    if (i%2 ==0)
+    {
+      x0[i] = 2.;
+    }
+  }
+  x0=matvec(x0, i1, iN, me, Nx,Ny,Np,dt);
+  //cout<< "me=   "<<me<<endl;
+  MPI_Status Status;
+  int i1b , iNb;
+  for (int k(0);k<x0.size();k++)
+  {
+  
+    utest[k+i1]=x0[k];
+  
+  }
+  if (me==0)
+  {
+    for (int l(1);l<np;l++)
+    {
+      charge(&i1b,&iNb,l,Nx*Ny,np);
+      MPI_Recv(&utest[i1b] , iN-i1+1, MPI_DOUBLE, l, 10, MPI_COMM_WORLD, &Status);
+    }
+    for (int f(0);f<Nx*Ny;f++)
+    {
+      cout<<utest[f]<<endl;
+    }
+  }
+  else
+  {
+    MPI_Send(&x0[0], iN-i1+1, MPI_DOUBLE, 0, 10, MPI_COMM_WORLD);
+  }
+
 
 
 
@@ -87,11 +109,11 @@ int main(int argc, char ** argv)
     }
   }
 
-    b=mRHS->RHS(u,t,i1,iN,me,Nx,Ny,dt);
+    b=RHS(u,t,i1,iN,me,Nx,Ny,dt);
 
-    u1=sl->GC(u,b);
+    // u1=sl->GC(u,b);
 
-    u=u1;
+    // u=u1;
 
 
   /*while (t<tmax)
