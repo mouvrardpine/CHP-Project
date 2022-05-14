@@ -11,9 +11,9 @@
 
 int main(int argc, char ** argv)
 {
-  int Nx(3), Ny(4),k(0),kmax(500), i1,iN,me,Np,pb(1);
-  double dt(0.1),dx,dy,D, Lx(1), Ly(1), tmax(5.0),eps(pow(10,-10)), t(0.),err(0);
-  
+  int Nx(10), Ny(16),k(0),kmax(1000), i1,iN,me,Np,pb(3);
+  double dt(0.1),dx,dy,D, Lx(1), Ly(1), tmax(5.0),eps(pow(10,-16)), t(0.),err(0);
+
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD,&me);
   MPI_Comm_size(MPI_COMM_WORLD,&Np);
@@ -26,9 +26,9 @@ int main(int argc, char ** argv)
    int n = Nx*Ny;
    //cout << n << endl;
    charge(&i1,&iN, me,n,Np);
- 
+
    int size = iN - i1 + 1;
-  
+
    std::vector<double> u(size,0),b(size,0),x0(size,1), uex_vec(size,0), test(size,1), utest(n),u1(size,0);
 
    dx=1./(Nx+1);
@@ -67,7 +67,7 @@ int main(int argc, char ** argv)
        x0[i] = 2.;
      }
    }
- 
+
    x0=matvec(x0, i1, iN, me, Nx,Ny,Np,dt);
    //cout<< "me=   "<<me<<endl;
     MPI_Status Status;
@@ -78,7 +78,7 @@ int main(int argc, char ** argv)
       utest[k+i1]=x0[k];
       //cout << "k = " << k + i1 << endl;
     }
-  
+
     if (me==0)
     {
       for (int l(1);l<Np;l++)
@@ -120,12 +120,13 @@ int main(int argc, char ** argv)
         cout<<"-------------------- t= "<< t<< "me="<<me<<" --------------------------"<<endl;
 
         b=RHS(u,t,Nx,Ny,i1, iN,Lx,Ly,dt,pb);
-
-        cout<<"RHS_"<< me<<endl;
+        //for (int f(0);f<size;f++)
+        //   {
+        //     cout<<"me = " << me << " t = " << t << " b["<<f<<"] = " <<b[f]<<endl;
+        //   }
+        //cout<<"RHS_"<< me<<endl;
 
         u=GC(u,b, i1, iN, kmax, me, Nx, Ny, Np, dt, eps);
-
-        //cout << "t =" << t << endl;
 
         string filename("Output/sol" +to_string(me)+ to_string(int(t/dt)) +".dat");
         fstream file_out;
@@ -144,7 +145,7 @@ int main(int argc, char ** argv)
         //  {
         //    file_out<< u[k]<<endl;
         // }
-        //cout<<"saucisse3 "<< me<<endl;
+
         //file_out << "Some random text to write." << endl;
         cout << "Done Writing!" << me<<endl;
     } else {
@@ -155,11 +156,11 @@ int main(int argc, char ** argv)
     {
         uex_vec[i-i1]=uex((i%Nx+1)*dx, (i/Nx+1)*dy, pb);
         //uex_vec[i-i1]=0;
-    } 
-    
+    }
+
     err = normL2_2D(substract(u,uex_vec), dx, dy);
     //err = norm(substract(u,uex_vec));
-    cout<<"me = " << me << " err=  "<<err<<endl;
+    cout<< "------------------------------------------t = " << t << "me = " << me << " err=  "<<err<< " --------------------------------------" <<endl;
 
     }
 

@@ -14,7 +14,7 @@ std::vector<double>   matvec(std::vector<double> x, int i1, int iN, int me,int N
 	double dx = 1./(Nx+1) , dy = 1./(Ny+1), msg;
 	double alpha = 2*dt*(1/(pow(dx,2)) +1 / pow(dy,2)) + 1 ;
 	double beta_x = - dt/pow(dx,2) , beta_y = - dt/pow(dy,2) ;
-	std::vector<double> Ax(size,0), grand_x(size + 2*Nx);
+	std::vector<double> Ax(size,0.), grand_x(size + 2*Nx,0.);
 	//cout << "alpha= "<< alpha << "	beta_x="<<beta_x<< "	beta_y="<<beta_y<<endl;
 
 	// Envoi des Nx premiers éléments de me à me-1 et réception des Nx derniers éléments de me envoyés par me+1
@@ -24,7 +24,7 @@ std::vector<double>   matvec(std::vector<double> x, int i1, int iN, int me,int N
 		//cout<<" me "<<me << "  j'envoie à "<<he <<" saucisse1"<<endl;
 		if (me !=0) MPI_Send(&x[i], 1, MPI_DOUBLE, me-1, tag, MPI_COMM_WORLD);
 		//cout<<" me "<<me << "  j'attends à "<<he <<" saucisse1"<<endl;
-		if (me != Np -1) MPI_Recv(&grand_x[grand_x.size()-1-(Nx-i-1)], 1, MPI_DOUBLE, me+1, tag, MPI_COMM_WORLD, &Status);
+		if (me != Np -1) MPI_Recv(&grand_x[grand_x.size()-1-(Nx-1-i)], 1, MPI_DOUBLE, me+1, tag, MPI_COMM_WORLD, &Status);
 	}
 
 	// Envoi des Nx derniers éléments de me à me+1 et réception des Nx derniers éléments de me envoyés par me-1
@@ -91,7 +91,7 @@ std::vector<double> RHS( std::vector<double> u, double t, int Nx, int Ny, int i1
 	{
 		double x = (i%Nx+1)*dx, y = (i/Nx+1)*dy;
 
-		F[i-i1] = dt*f1(x, y, t + dt, pb, Lx, Ly) + u[i];
+		F[i-i1] = dt*f1(x, y, t + dt, pb, Lx, Ly) + u[i-i1];
 
 		if ((i+1)%Nx == 1)
 		{
@@ -105,7 +105,7 @@ std::vector<double> RHS( std::vector<double> u, double t, int Nx, int Ny, int i1
 
 		if (i/Nx == 0)
 		{
-			F[i-i1] += beta_y* g1(x,0,pb);
+			F[i-i1] += beta_y*g1(x,0,pb);
 		}
 
 		if (i/Nx + 1 == Ny)
