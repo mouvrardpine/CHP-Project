@@ -6,20 +6,21 @@
 
 using namespace std;
 
+
+//Produit scalaire
 double ps(vector <double> x1, vector <double> x2)
 {
     double res(0),sum(0) ;
     int n(x1.size());
     for (int i(0); i< n; i++)
     {
-        res += x1[i]*x2[i];
+      res += x1[i]*x2[i];
     }
-    //MPI_Allreduce(&res,&sum,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
-    //return sum;
     return res;
-    
+
 }
 
+//Soustraction de deux vecteurs
  vector <double> substract(vector <double> x1, vector <double> x2)
 {
     int n(x1.size());
@@ -27,13 +28,12 @@ double ps(vector <double> x1, vector <double> x2)
 
     for (int i(0); i< n; i++)
     {
-        res[i] =x1[i]-x2[i];
+      res[i] =x1[i]-x2[i];
     }
     return res;
-
 }
 
-
+//Addition de vecteurs
  vector<double> add(vector <double> x1, vector <double> x2)
 {
 int n(x1.size());
@@ -47,12 +47,13 @@ vector<double> res(n,0) ;
 
 }
 
-
- double norm(vector<double> x)
+//Norme euclidienne d'un vecteur
+double norm(vector<double> x)
 {
     return sqrt(ps(x,x));
 }
 
+//Multiplication d'un vecteur par un réel
 vector <double> mult(double a , vector<double> x)
 {
     int n(x.size());
@@ -65,91 +66,76 @@ vector <double> mult(double a , vector<double> x)
     return res ;
 }
 
+//Norme L2 (pour le calcul de l'erreur quadratique)
 double normL2_2D(vector<double> x, double dx, double dy)
 {
   double res(0),sum(0);
-    for (int i = 0; i < x.size(); i++) {
-      res += pow(x[i],2);
-    };
-   // MPI_Allreduce(&res,&sum,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
-    sum = sqrt(res*dx*dy);
-    
-    return sum;
+  for (int i = 0; i < x.size(); i++) {
+    res += pow(x[i],2);
+  };
+  sum = sqrt(res*dx*dy);
+
+  return sum;
 }
 
+//Gradient conjugué
 std::vector<double> GC(std::vector <double> x0 , std::vector <double> b, int i1, int iN, int kmax,int me, int Nx, int Ny, int Np, double dt, double eps )
 {
-    int k(0), n(x0.size()), test1(2),test2(3),cond(0),cond1; //test1  et test2 a supprimer : seulement pour esquiver bug de compilation
-    vector<double> r(n,0),x(n,0),x1(n,0), d(n,0), z(n,0), rp(n,0),d1(n,0);
+    //Déclaration/initisalisation des variables
+    int k(0), n(x0.size());
+    vector<double> r(n,0),x(n,0), d(n,0), z(n,0), rp(n,0),d1(n,0);
     double beta, gamma,alpha, beta_part, gamma_part, alpha_part, alpha_inter_part, alpha_inter, tau_part, tau ;
 
+    //Initialisation de x
     x=x0;
-    //charge(i1, iN, me, n, Np)
+
+    //Calcul du résidu initial
     r=substract(b,matvec(x, i1, iN, me, Nx, Ny, Np, dt));
     d=r;
 
-    /* for (int k(0);k<r.size();k++)
-  {
-  
-   cout << "d["<<k<<"] = "<<d[k]<<endl;
-  
-} */
-    beta_part= ps(r,r); //reduction pour la norme de r
+    //Calcul de la norme du résidu
+    beta_part= ps(r,r);
     MPI_Allreduce(&beta_part,&beta,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
     beta = sqrt(beta);
-  
-   //cout<< "k = " << k << " me = " << me << " beta = " << beta<<endl;
+
+
+    //Boucle sur k
     while ((beta>eps)&&(k<kmax))
     {
-        //cout<<"saucisse1"<<_me<<endl;
-        z=matvec(d, i1, iN,me, Nx,Ny,Np,dt);
-        //cout<<"saucisse2"<<_me<<endl;
-        gamma_part=ps(r,r); 
-        //cout<<"k= "<<k <<"me = "<<me<< "gamma_part = " << gamma_part << endl;
-        MPI_Allreduce(&gamma_part,&gamma,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
-        //cout<<"k= "<<k<<"me = "<<me<< "gamma = " << gamma << endl;
-        alpha_inter_part=ps(z,d); 
-        MPI_Allreduce(&alpha_inter_part,&alpha_inter,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
-        
-        alpha=gamma/alpha_inter; //reduction pour le produit scalaire  !!!!!!!!!!!!!!!!!!!!!! vérification en print sur le gamma!!!!!!!!!!!!!!!!
-       
-        x1=add(x,mult(alpha,d));
-       // cout<<"saucisse4"<<_me<<endl;
-        x=x1; 
-        //cout<<"saucisse5"<<_me<<endl;
-        rp=substract(r,mult(alpha,z));
-        //cout<<"saucisse6"<<_me<<endl;
-        tau_part= ps(rp,rp); //reduction pour la norme de r
-        MPI_Allreduce(&tau_part,&tau,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
-        d1= add(rp,mult((tau/pow(beta,2)),d));
-        //cout<< "saucisse7 "<< _me <<" k= "<< k<<endl;
-        d=d1; // reduction pour le ps rp 
-        r=rp;
-        beta_part= ps(r,r); //reduction pour la norme de r
-        MPI_Allreduce(&beta_part,&beta,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
-        beta = sqrt(beta);
-        //cout<<"saucisse7"<<_me<<endl;
-          //racine de ps(rp,rp)
-        //cout<< "k = " << k << " me = " << me << " beta = " << beta<<endl;
-        k=k+1;
-          //racine de ps(rp,rp)
-        //cout<<"k= "<<k<< "  beta= " << beta<< "  beta reel =" << norm(substract(b,matvec(_dt,_Nx, _Ny,x))) << endl;
-        /* if(!((beta>eps)&&(k<kmax)))
-        {
-            cond=1;
-        } */
-        //MPI_Allreduce(&cond,&cond1,1,MPI_INT,MPI_PROD,MPI_COMM_WORLD);
-        
-        //cout<< "k = " << k << " me = " << _me <<" gamma = " << gamma << " alpha = "<<alpha<<"beta = " << beta <<endl;
+      z=matvec(d, i1, iN,me, Nx,Ny,Np,dt);
 
+      gamma_part=ps(r,r);
+      MPI_Allreduce(&gamma_part,&gamma,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
+
+      alpha_inter_part=ps(z,d);
+      MPI_Allreduce(&alpha_inter_part,&alpha_inter,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
+      alpha=gamma/alpha_inter;
+
+      //Mise à jour de x
+      x=add(x,mult(alpha,d));
+
+      //Calcul du nouveau résidu
+      rp=substract(r,mult(alpha,z));
+
+      //Calcul et mise à jour de d
+      tau_part= ps(rp,rp);
+      MPI_Allreduce(&tau_part,&tau,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
+      d= add(rp,mult((tau/pow(beta,2)),d));
+
+      //Mise à jour du résidu
+      r=rp;
+      beta_part= ps(r,r);
+      MPI_Allreduce(&beta_part,&beta,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
+      beta = sqrt(beta);
+
+      //Mise à jour de k
+      k=k+1;
     }
-    //cout<<"k = " << k <<"beta = " << beta << "me" << me <<endl;
-    //cout<<"saucisse10"<<endl;
+
     if (k>kmax)
     {
         printf("tolérance non atteinte");
     }
-    //cout<<"beta = " << beta<<endl;
     return x;
 
 }

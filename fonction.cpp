@@ -2,6 +2,8 @@
 #include "math.h"
 
 
+
+// Fonction source (f)
 double f1(double x, double y, double t,int pb, double Lx, double Ly)
 {
     if (pb==1)
@@ -18,7 +20,7 @@ double f1(double x, double y, double t,int pb, double Lx, double Ly)
     }
 }
 
-
+//Condition de Dirichlet sur Gamma_0
 double g1(double x, double y, int pb)
 {
     if (pb==1)
@@ -35,6 +37,7 @@ double g1(double x, double y, int pb)
     }
 }
 
+//Condition de Dirichlet sur Gamma_1
 double h1(double x, double y, int pb)
 {
 
@@ -52,6 +55,8 @@ double h1(double x, double y, int pb)
     }
 }
 
+
+//Solution exacte
 double uex(double x, double y, int pb)
 {
     if (pb==1)
@@ -69,6 +74,7 @@ double uex(double x, double y, int pb)
 
 }
 
+//Calcul de la charge
 void charge(int *i1,int *iN, int me, int n, int Np)
 {
   int r = n%Np;
@@ -82,19 +88,5 @@ void charge(int *i1,int *iN, int me, int n, int Np)
   {
     *i1=r+me*(n/Np);
     *iN=*i1+(n/Np)-1;
-  }    
+  }
 }
-
-// int charge_ :: whichMe(int i)
-// {
-//     int i1, iN;
-//     for (int k(0); k<_Np;k++)
-//     {
-//         charge(&i1,&iN,k,_n,_Np);
-//         if (( i<=iN )&&(i>= i1))
-//         {
-//             return k;
-//         }
-//     }
-//     std::cout<<"erreur dans WhichME"<<std::endl;
-// }
