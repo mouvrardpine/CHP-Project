@@ -80,7 +80,7 @@ double normL2_2D(vector<double> x, double dx, double dy)
 
 //Gradient conjugué
 std::vector<double> GC(std::vector <double> x0 , std::vector <double> b, int i1, int iN, int kmax,int me, int Nx, int Ny, int Np, double dt, double eps )
-{
+{/* code */
     //Déclaration/initisalisation des variables
     int k(0), n(x0.size());
     vector<double> r(n,0),x(n,0), d(n,0), z(n,0), rp(n,0),d1(n,0);
